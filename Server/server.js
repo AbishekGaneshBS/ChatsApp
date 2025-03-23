@@ -3,6 +3,7 @@ const path = require('path');
 const grpc = require('@grpc/grpc-js');
 const createorloginProto = require('./createorlogin_grpc_pb');
 const messages = require('./createorlogin_pb');
+const ejs = require('ejs');
 
 const app = express();
 const PORT = 3000;
@@ -13,8 +14,11 @@ const client = new createorloginProto.AccountServiceClient(
   grpc.credentials.createInsecure()
 );
 
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '../Client/Views'));
 
-app.use(express.static(path.join(__dirname, '../Client/Template')));
+
+app.use(express.static(path.join(__dirname, '../Client')));
 
 
 app.use(express.json());
@@ -22,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../Client/Template', 'index.html'));
+  res.render('index', { message: null, url: null }); 
 });
 
 
@@ -37,18 +41,18 @@ app.post('/register', (req, res) => {
   client.createAccount(request, (err, response) => {
     if (err) {
       console.error('Error creating account:', err);
-      res.status(500).json({ status: 'FAILURE', message: 'Error creating account. Please try again.' });
+      res.render('index', { message: 'Error creating account. Please try again.', url: null }); 
       return;
     }
 
     const status = response.getStatus();
     if (status === messages.ResponseStatus.SUCCESS) {
       const url = response.getUrl();
-      res.json({ status: 'SUCCESS', message: 'Registration successful!', url });
+      res.render('index', { message: 'Registration successful!', url });
     } else if (status === messages.ResponseStatus.ACCOUNT_EXISTS) {
-      res.status(400).json({ status: 'FAILURE', message: 'Username is already taken.' });
+      res.render('index', { message: 'Username is already taken.', url: null }); 
     } else {
-      res.status(400).json({ status: 'FAILURE', message: 'Registration failed. Please try again.' });
+      res.render('index', { message: 'Registration failed. Please try again.', url: null }); 
     }
   });
 });
@@ -64,20 +68,20 @@ app.post('/login', (req, res) => {
   client.loginAccount(request, (err, response) => {
     if (err) {
       console.error('Error logging in:', err);
-      res.status(500).json({ status: 'FAILURE', message: 'Error logging in. Please try again.' });
+      res.render('index', { message: 'Error logging in. Please try again.', url: null }); 
       return;
     }
 
     const status = response.getStatus();
     if (status === messages.ResponseStatus.SUCCESS) {
       const url = response.getUrl();
-      res.json({ status: 'SUCCESS', message: 'Login successful!', url });
+      res.render('index', { message: 'Login successful!', url });
     } else if (status === messages.ResponseStatus.ACCOUNT_NOT_FOUND) {
-      res.status(400).json({ status: 'FAILURE', message: 'Account not found.' });
+      res.render('index', { message: 'Account not found.', url: null }); 
     } else if (status === messages.ResponseStatus.UNAUTHORIZED) {
-      res.status(400).json({ status: 'FAILURE', message: 'Wrong username or password.' });
+      res.render('index', { message: 'Wrong username or password.', url: null }); 
     } else {
-      res.status(400).json({ status: 'FAILURE', message: 'Login failed. Please try again.' });
+      res.render('index', { message: 'Login failed. Please try again.', url: null }); 
     }
   });
 });
