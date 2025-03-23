@@ -1,0 +1,22 @@
+{
+  "name": "chatsapp",
+  "version": "1.0.0",
+  "description": "Simple Chat Application using gRPC and NodeJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbishekGaneshBS/ChatsApp.git"
+  },
+  "author": "Abishek Ganesh B S",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AbishekGaneshBS/ChatsApp/issues"
+  },
+  "homepage": "https://github.com/AbishekGaneshBS/ChatsApp#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
