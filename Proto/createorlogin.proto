@@ -31,13 +31,15 @@ message LoginAccountRequest {
 message CreateAccountResponse {
     ResponseStatus status = 1;  
     User myself = 2;
-    repeated User contacts = 3;         
+    repeated User contacts = 3;
+    string url = 4;      
 }
 
 message LoginAccountResponse {
     ResponseStatus status = 1;  
     User myself = 2;
-    repeated User contacts = 3; 
+    repeated User contacts = 3;
+    string url = 4;
        
 }
 

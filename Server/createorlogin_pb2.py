@@ -24,15 +24,15 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13\x63reateorlogin.proto\x12\x10\x63reateorlogin.v1\"@\n\x04User\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x11\n\tuser_name\x18\x02 \x01(\t\x12\x14\n\x0c\x64isplay_name\x18\x03 \x01(\t\"Q\n\x14\x43reateAccountRequest\x12\x11\n\tuser_name\x18\x01 \x01(\t\x12\x14\n\x0c\x64isplay_name\x18\x02 \x01(\t\x12\x10\n\x08password\x18\x03 \x01(\t\":\n\x13LoginAccountRequest\x12\x11\n\tuser_name\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\x9b\x01\n\x15\x43reateAccountResponse\x12\x30\n\x06status\x18\x01 \x01(\x0e\x32 .createorlogin.v1.ResponseStatus\x12&\n\x06myself\x18\x02 \x01(\x0b\x32\x16.createorlogin.v1.User\x12(\n\x08\x63ontacts\x18\x03 \x03(\x0b\x32\x16.createorlogin.v1.User\"\x9a\x01\n\x14LoginAccountResponse\x12\x30\n\x06status\x18\x01 \x01(\x0e\x32 .createorlogin.v1.ResponseStatus\x12&\n\x06myself\x18\x02 \x01(\x0b\x32\x16.createorlogin.v1.User\x12(\n\x08\x63ontacts\x18\x03 \x03(\x0b\x32\x16.createorlogin.v1.User*z\n\x0eResponseStatus\x12\x0b\n\x07SUCCESS\x10\x00\x12\x0b\n\x07\x46\x41ILURE\x10\x01\x12\x11\n\rINVALID_INPUT\x10\x02\x12\x12\n\x0e\x41\x43\x43OUNT_EXISTS\x10\x03\x12\x15\n\x11\x41\x43\x43OUNT_NOT_FOUND\x10\x04\x12\x10\n\x0cUNAUTHORIZED\x10\x05\x32\xd1\x01\n\x0e\x41\x63\x63ountService\x12`\n\rCreateAccount\x12&.createorlogin.v1.CreateAccountRequest\x1a\'.createorlogin.v1.CreateAccountResponse\x12]\n\x0cLoginAccount\x12%.createorlogin.v1.LoginAccountRequest\x1a&.createorlogin.v1.LoginAccountResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13\x63reateorlogin.proto\x12\x10\x63reateorlogin.v1\"@\n\x04User\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x11\n\tuser_name\x18\x02 \x01(\t\x12\x14\n\x0c\x64isplay_name\x18\x03 \x01(\t\"Q\n\x14\x43reateAccountRequest\x12\x11\n\tuser_name\x18\x01 \x01(\t\x12\x14\n\x0c\x64isplay_name\x18\x02 \x01(\t\x12\x10\n\x08password\x18\x03 \x01(\t\":\n\x13LoginAccountRequest\x12\x11\n\tuser_name\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\xa8\x01\n\x15\x43reateAccountResponse\x12\x30\n\x06status\x18\x01 \x01(\x0e\x32 .createorlogin.v1.ResponseStatus\x12&\n\x06myself\x18\x02 \x01(\x0b\x32\x16.createorlogin.v1.User\x12(\n\x08\x63ontacts\x18\x03 \x03(\x0b\x32\x16.createorlogin.v1.User\x12\x0b\n\x03url\x18\x04 \x01(\t\"\xa7\x01\n\x14LoginAccountResponse\x12\x30\n\x06status\x18\x01 \x01(\x0e\x32 .createorlogin.v1.ResponseStatus\x12&\n\x06myself\x18\x02 \x01(\x0b\x32\x16.createorlogin.v1.User\x12(\n\x08\x63ontacts\x18\x03 \x03(\x0b\x32\x16.createorlogin.v1.User\x12\x0b\n\x03url\x18\x04 \x01(\t*z\n\x0eResponseStatus\x12\x0b\n\x07SUCCESS\x10\x00\x12\x0b\n\x07\x46\x41ILURE\x10\x01\x12\x11\n\rINVALID_INPUT\x10\x02\x12\x12\n\x0e\x41\x43\x43OUNT_EXISTS\x10\x03\x12\x15\n\x11\x41\x43\x43OUNT_NOT_FOUND\x10\x04\x12\x10\n\x0cUNAUTHORIZED\x10\x05\x32\xd1\x01\n\x0e\x41\x63\x63ountService\x12`\n\rCreateAccount\x12&.createorlogin.v1.CreateAccountRequest\x1a\'.createorlogin.v1.CreateAccountResponse\x12]\n\x0cLoginAccount\x12%.createorlogin.v1.LoginAccountRequest\x1a&.createorlogin.v1.LoginAccountResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'createorlogin_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_RESPONSESTATUS']._serialized_start=565
-  _globals['_RESPONSESTATUS']._serialized_end=687
+  _globals['_RESPONSESTATUS']._serialized_start=591
+  _globals['_RESPONSESTATUS']._serialized_end=713
   _globals['_USER']._serialized_start=41
   _globals['_USER']._serialized_end=105
   _globals['_CREATEACCOUNTREQUEST']._serialized_start=107
@@ -40,9 +40,9 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_LOGINACCOUNTREQUEST']._serialized_start=190
   _globals['_LOGINACCOUNTREQUEST']._serialized_end=248
   _globals['_CREATEACCOUNTRESPONSE']._serialized_start=251
-  _globals['_CREATEACCOUNTRESPONSE']._serialized_end=406
-  _globals['_LOGINACCOUNTRESPONSE']._serialized_start=409
-  _globals['_LOGINACCOUNTRESPONSE']._serialized_end=563
-  _globals['_ACCOUNTSERVICE']._serialized_start=690
-  _globals['_ACCOUNTSERVICE']._serialized_end=899
+  _globals['_CREATEACCOUNTRESPONSE']._serialized_end=419
+  _globals['_LOGINACCOUNTRESPONSE']._serialized_start=422
+  _globals['_LOGINACCOUNTRESPONSE']._serialized_end=589
+  _globals['_ACCOUNTSERVICE']._serialized_start=716
+  _globals['_ACCOUNTSERVICE']._serialized_end=925
 # @@protoc_insertion_point(module_scope)

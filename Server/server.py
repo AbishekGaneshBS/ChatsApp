@@ -1,60 +1,135 @@
 from concurrent import futures
-from datetime import datetime
 import sqlite3
-import time
 import grpc
 import bcrypt
 import createorlogin_pb2_grpc, createorlogin_pb2
 
 
+
 def hash_password(password):
-    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
 def verify_password(plain_password, hashed_password):
-    if isinstance(hashed_password, str):
-        hashed_password = hashed_password.encode('utf-8')
-    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password)
+    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
 def check_if_user_name_exists(username):
     try:
-        conn = sqlite3.connect('../Database/database.db')
+        conn = sqlite3.connect('DataBase/database.db')
         cursor = conn.cursor()
-        cursor.execute("SELECT 1 FROM Users WHERE User_Name = ?;", (username.strip(),))
+        cursor.execute("SELECT User_Name FROM Users WHERE User_Name = ?;", (username.strip(),))
         res = cursor.fetchone()
         conn.close()
-        if res is None:
-            return 0
+        if res is not None and username in res:
+            return True
         else:
-            return 3
-    except:
-        return 1
+            return False
+    except Exception as e:
+        print(f"Database error from checking: {e}")
+        return False
 
+class AccountService(createorlogin_pb2_grpc.AccountServiceServicer):
+    def CreateAccount(self, request, context):
+        print(request)
+        if check_if_user_name_exists(request.user_name):
 
-class CreateAccountService(createorlogin_pb2_grpc.AccountServiceServicer):
-    def CreateAccount(self, request, content):
-        response = check_if_user_name_exists(request.user_name)
-        if response == 0:
-            try:
-                hashed_password = hash_password(request.password)
-                conn = sqlite3.connect('../Database/database.db')
-                cursor = conn.cursor()
-                cursor.execute("INSERT INTO Users (User_Name, Display_Name, Password) VALUES (?, ?)", (request.user_name, request.display_name, hashed_password))
-                conn.commit()
-            except:
-                response = 1
-            finally:
-                conn.close()
+            return createorlogin_pb2.CreateAccountResponse(
+                status=createorlogin_pb2.ResponseStatus.ACCOUNT_EXISTS
+            )
+
+        hashed_password = hash_password(request.password)
+
+        try:
+            conn = sqlite3.connect('DataBase/database.db')
+            cursor = conn.cursor()
             
-        
+            cursor.execute(
+                "INSERT INTO Users (User_Name, Display_Name, Password) VALUES (?, ?, ?);",
+                (request.user_name, request.display_name, hashed_password)
+            )
+            conn.commit()
+
+            cursor.execute("SELECT User_ID, User_Name, Display_Name FROM Users WHERE User_Name = ?;", (request.user_name,))
+            user_data = cursor.fetchone()
+            conn.close()
+
+            if user_data:
+                user_id, user_name, display_name = user_data
+                user = createorlogin_pb2.User(
+                    user_id=user_id,
+                    user_name=user_name,
+                    display_name=display_name
+                )
+
+                return createorlogin_pb2.CreateAccountResponse(
+                    status=createorlogin_pb2.ResponseStatus.SUCCESS,
+                    myself=user,
+                    contacts=[],
+                    url=f"http://ChatsApp/Main"
+                )
+            else:
+                return createorlogin_pb2.CreateAccountResponse(
+                    status=createorlogin_pb2.ResponseStatus.FAILURE
+                )
+        except Exception as e:
+            print(f"Error creating account: {e}")
+            return createorlogin_pb2.CreateAccountResponse(
+                status=createorlogin_pb2.ResponseStatus.FAILURE
+            )
+
+    def LoginAccount(self, request, context):
+        if not check_if_user_name_exists(request.user_name):
+            return createorlogin_pb2.LoginAccountResponse(
+                status=createorlogin_pb2.ResponseStatus.ACCOUNT_NOT_FOUND
+            )
+
+        try:
+            conn = sqlite3.connect('DataBase/database.db')
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT User_ID, User_Name, Display_Name, Password FROM Users WHERE User_Name = ?;",
+                (request.user_name,)
+            )
+            user_data = cursor.fetchone()
+            conn.close()
+
+            if user_data:
+                user_id, user_name, display_name, hashed_password = user_data
+
+                if verify_password(request.password, hashed_password):
+                    user = createorlogin_pb2.User(
+                        user_id=user_id,
+                        user_name=user_name,
+                        display_name=display_name
+                    )
+
+                    return createorlogin_pb2.LoginAccountResponse(
+                        status=createorlogin_pb2.ResponseStatus.SUCCESS,
+                        myself=user,
+                        contacts=[],
+                        url=f"http://ChatsApp/Main"
+                    )
+                else:
+                    return createorlogin_pb2.LoginAccountResponse(
+                        status=createorlogin_pb2.ResponseStatus.UNAUTHORIZED
+                    )
+            else:
+                return createorlogin_pb2.LoginAccountResponse(
+                    status=createorlogin_pb2.ResponseStatus.FAILURE
+                )
+        except Exception as e:
+            print(f"Error logging in: {e}")
+            return createorlogin_pb2.LoginAccountResponse(
+                status=createorlogin_pb2.ResponseStatus.FAILURE
+            )
+
+
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    createorlogin_pb2_grpc.add_AccountServiceServicer_to_server(CreateAccountService(), server)
-    #createorlogin_pb2_grpc.add_AccountServiceServicer_to_server(LoginService(), server)
-
+    createorlogin_pb2_grpc.add_AccountServiceServicer_to_server(AccountService(), server)
     server.add_insecure_port('[::]:8000')
-    server.start()
     print("Server started on port 8000.")
+    server.start()
     server.wait_for_termination()
 
 if __name__ == '__main__':
