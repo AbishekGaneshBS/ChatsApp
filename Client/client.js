@@ -1,7 +1,4 @@
 const grpc = require('@grpc/grpc-js');
-const protoLoader = require('@grpc/grpc-js');
-const path = require('path');
-
 
 const createorloginProto = require('./createorlogin_grpc_pb'); 
 const messages = require('./createorlogin_pb');
