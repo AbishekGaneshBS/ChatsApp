@@ -41,8 +41,8 @@ body {
     background-color: #007bff;
     color: #fff;
     cursor: pointer;
-    margin: 10px 0; /* Added margin for consistent spacing */
-    width: 100%; /* Make buttons full width */
+    margin: 10px 0;
+    width: 100%;
   }
   
   button:hover {
@@ -59,7 +59,7 @@ body {
   }
   
   #forgot-password {
-    background-color: #6c757d; /* Different color for forgot password button */
+    background-color: #6c757d;
   }
   
   #forgot-password:hover {

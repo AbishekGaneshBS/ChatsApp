@@ -5,71 +5,85 @@ const showLoginLink = document.getElementById("show-login");
 const loginSection = document.getElementById("login-form");
 const registerSection = document.getElementById("register-form");
 
-showRegisterLink.addEventListener("click", () => {
-  loginSection.classList.add("hidden");
-  registerSection.classList.remove("hidden");
+// Switch to Register Form
+showRegisterLink.addEventListener("click", (e) => {
+  e.preventDefault();
+  switchToRegisterForm();
 });
 
-showLoginLink.addEventListener("click", () => {
-  registerSection.classList.add("hidden");
-  loginSection.classList.remove("hidden");
+// Switch to Login Form
+showLoginLink.addEventListener("click", (e) => {
+  e.preventDefault();
+  switchToLoginForm();
 });
 
-
-loginForm.addEventListener("submit", (e) => {
+// Login Form Submission
+loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const username = document.getElementById("login-username").value;
   const password = document.getElementById("login-password").value;
 
+  try {
+    const response = await fetch('/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
 
-  if (yourLoginLogic(username, password)) {
-    alert("Login successful!");
-
-  } else {
-    alert("Wrong username or password.");
+    const result = await response.json();
+    if (result.status === 'SUCCESS') {
+      alert(result.message);
+      window.location.href = result.url; // Redirect to the provided URL
+    } else {
+      alert(result.message);
+    }
+  } catch (error) {
+    console.error('Error during login:', error);
+    alert('An error occurred. Please try again.');
   }
 });
 
-
-registerForm.addEventListener("submit", (e) => {
+// Register Form Submission
+registerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const username = document.getElementById("register-username").value;
   const displayName = document.getElementById("register-displayname").value;
   const password = document.getElementById("register-password").value;
 
+  try {
+    const response = await fetch('/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, displayName, password }),
+    });
 
-  if (yourUsernameCheckLogic(username)) {
-    alert("Username is already taken.");
-  } else {
-    // Replace this with your own logic for registering the user
-    // Example: Call an API or save to a database
-    yourRegisterLogic(username, displayName, password);
-    alert("Registration successful! Please login.");
-    loginSection.classList.remove("hidden");
-    registerSection.classList.add("hidden");
+    const result = await response.json();
+    if (result.status === 'SUCCESS') {
+      alert(result.message);
+      window.location.href = result.url; // Redirect to the provided URL
+    } else {
+      alert(result.message);
+    }
+  } catch (error) {
+    console.error('Error during registration:', error);
+    alert('An error occurred. Please try again.');
   }
 });
 
 // Forgot Password Button
-document.getElementById("forgot-password").addEventListener("click", () => {
+document.getElementById("forgot-password").addEventListener("click", (e) => {
+  e.preventDefault();
   alert("Please contact support to reset your password.");
 });
 
-// Placeholder functions for your logic
-function yourLoginLogic(username, password) {
-  // Replace this with your actual login logic
-  // Example: Call an API or check against a database
-  return false; // Return true if login is successful, false otherwise
+// Helper function to switch to the login form
+function switchToLoginForm() {
+  registerSection.classList.add("hidden");
+  loginSection.classList.remove("hidden");
 }
 
-function yourUsernameCheckLogic(username) {
-  // Replace this with your actual logic to check if the username is taken
-  // Example: Call an API or check against a database
-  return false; // Return true if the username is taken, false otherwise
-}
-
-function yourRegisterLogic(username, displayName, password) {
-  // Replace this with your actual logic to register the user
-  // Example: Call an API or save to a database
-  console.log("User registered:", { username, displayName, password });
+// Helper function to switch to the register form
+function switchToRegisterForm() {
+  loginSection.classList.add("hidden");
+  registerSection.classList.remove("hidden");
 }
