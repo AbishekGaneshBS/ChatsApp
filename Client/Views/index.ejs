@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login and Register</title>
+  <link rel="stylesheet" href="../Styles/styles.css">
+</head>
+<body>
+  <div class="container">
+
+    <div id="login-form" class="form">
+      <h2>Login</h2>
+      <form id="login" action="/login" method="POST">
+        <input type="text" id="login-username" name="username" placeholder="Username" required>
+        <input type="password" id="login-password" name="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+        <button type="button" id="forgot-password">Forgot Password?</button>
+      </form>
+      <p>Don't have an account? <a href="#" id="show-register">Register</a></p>
+    </div>
+
+ 
+    <div id="register-form" class="form hidden">
+      <h2>Register</h2>
+      <form id="register" action="/register" method="POST">
+        <input type="text" id="register-username" name="username" placeholder="Username" required>
+        <input type="text" id="register-displayname" name="displayName" placeholder="Display Name" required>
+        <input type="password" id="register-password" name="password" placeholder="Password" required>
+        <button type="submit">Register</button>
+      </form>
+      <p>Already have an account? <a href="#" id="show-login">Login</a></p>
+    </div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById("login");
+    const registerForm = document.getElementById("register");
+    const showRegisterLink = document.getElementById("show-register");
+    const showLoginLink = document.getElementById("show-login");
+    const loginSection = document.getElementById("login-form");
+    const registerSection = document.getElementById("register-form");
+
+    showRegisterLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      switchToRegisterForm();
+    });
+
+    showLoginLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      switchToLoginForm();
+    });
+
+
+    function switchToLoginForm() {
+      registerSection.classList.add("hidden");
+      loginSection.classList.remove("hidden");
+    }
+
+
+    function switchToRegisterForm() {
+      loginSection.classList.add("hidden");
+      registerSection.classList.remove("hidden");
+    }
+
+
+    document.getElementById("forgot-password").addEventListener("click", (e) => {
+      e.preventDefault();
+      alert("Please contact support to reset your password.");
+    });
+
+
+    const message = "<%= message %>";
+    const url = "<%= url %>"; 
+    if (message) {
+      alert(message);
+      if (message.includes("successful") && url) { 
+        window.location.href = url;
+      }
+    }
+  </script>
+</body>
+</html>

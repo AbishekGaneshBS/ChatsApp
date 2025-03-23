@@ -1,1 +1,1 @@
-Simple Chat Application using gRPC and NodeJS
+Simple Chat Application using gRPC, ExpressJS and NodeJS
