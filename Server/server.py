@@ -31,7 +31,6 @@ class AccountService(createorlogin_pb2_grpc.AccountServiceServicer):
     def CreateAccount(self, request, context):
         print(request)
         if check_if_user_name_exists(request.user_name):
-
             return createorlogin_pb2.CreateAccountResponse(
                 status=createorlogin_pb2.ResponseStatus.ACCOUNT_EXISTS
             )
@@ -50,6 +49,10 @@ class AccountService(createorlogin_pb2_grpc.AccountServiceServicer):
 
             cursor.execute("SELECT User_ID, User_Name, Display_Name FROM Users WHERE User_Name = ?;", (request.user_name,))
             user_data = cursor.fetchone()
+
+            # Fetch all users except the current user
+            cursor.execute("SELECT User_ID, User_Name, Display_Name FROM Users WHERE User_Name != ?;", (request.user_name,))
+            all_users = cursor.fetchall()
             conn.close()
 
             if user_data:
@@ -60,10 +63,19 @@ class AccountService(createorlogin_pb2_grpc.AccountServiceServicer):
                     display_name=display_name
                 )
 
+                # Create a list of contacts
+                contacts = [
+                    createorlogin_pb2.User(
+                        user_id=u[0],
+                        user_name=u[1],
+                        display_name=u[2]
+                    ) for u in all_users
+                ]
+
                 return createorlogin_pb2.CreateAccountResponse(
                     status=createorlogin_pb2.ResponseStatus.SUCCESS,
                     myself=user,
-                    contacts=[],
+                    contacts=contacts,
                     url=f"http://ChatsApp/Main"
                 )
             else:
@@ -90,6 +102,10 @@ class AccountService(createorlogin_pb2_grpc.AccountServiceServicer):
                 (request.user_name,)
             )
             user_data = cursor.fetchone()
+
+            # Fetch all users except the current user
+            cursor.execute("SELECT User_ID, User_Name, Display_Name FROM Users WHERE User_Name != ?;", (request.user_name,))
+            all_users = cursor.fetchall()
             conn.close()
 
             if user_data:
@@ -102,10 +118,19 @@ class AccountService(createorlogin_pb2_grpc.AccountServiceServicer):
                         display_name=display_name
                     )
 
+                    # Create a list of contacts
+                    contacts = [
+                        createorlogin_pb2.User(
+                            user_id=u[0],
+                            user_name=u[1],
+                            display_name=u[2]
+                        ) for u in all_users
+                    ]
+
                     return createorlogin_pb2.LoginAccountResponse(
                         status=createorlogin_pb2.ResponseStatus.SUCCESS,
                         myself=user,
-                        contacts=[],
+                        contacts=contacts,
                         url=f"http://ChatsApp/Main"
                     )
                 else:
@@ -121,7 +146,6 @@ class AccountService(createorlogin_pb2_grpc.AccountServiceServicer):
             return createorlogin_pb2.LoginAccountResponse(
                 status=createorlogin_pb2.ResponseStatus.FAILURE
             )
-
 
 
 def serve():

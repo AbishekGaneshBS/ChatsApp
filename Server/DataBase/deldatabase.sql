@@ -1,0 +1,12 @@
+PRAGMA foreign_keys = OFF;
+DELETE FROM Users;
+DELETE FROM UserToUserMessages;
+DELETE FROM Groups;
+DELETE FROM GroupMembers;
+DELETE FROM GroupMessages;
+DELETE FROM sqlite_sequence WHERE name='Users';
+DELETE FROM sqlite_sequence WHERE name='UserToUserMessages';
+DELETE FROM sqlite_sequence WHERE name='Groups';
+DELETE FROM sqlite_sequence WHERE name='GroupMembers';
+DELETE FROM sqlite_sequence WHERE name='GroupMessages';
+PRAGMA foreign_keys = ON;
