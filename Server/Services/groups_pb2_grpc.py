@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import user_pb2 as user__pb2
+import groups_pb2 as groups__pb2
 
 GRPC_GENERATED_VERSION = '1.71.0'
 GRPC_VERSION = grpc.__version__
@@ -18,7 +18,7 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in user_pb2_grpc.py depends on'
+        + f' but the generated code in groups_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -34,31 +34,20 @@ class UserChatServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.LoadUserMessage = channel.unary_unary(
-                '/ChatsApp.user.UserChatService/LoadUserMessage',
-                request_serializer=user__pb2.LoadMessageRequest.SerializeToString,
-                response_deserializer=user__pb2.LoadMessageResponse.FromString,
-                _registered_method=True)
         self.SendUserMessage = channel.stream_stream(
-                '/ChatsApp.user.UserChatService/SendUserMessage',
-                request_serializer=user__pb2.SendMessageRequest.SerializeToString,
-                response_deserializer=user__pb2.SendMessageResponse.FromString,
+                '/ChatsApp.group.UserChatService/SendUserMessage',
+                request_serializer=groups__pb2.SendMessageRequest.SerializeToString,
+                response_deserializer=groups__pb2.SendMessageResponse.FromString,
                 _registered_method=True)
         self.ReceiveUserMessage = channel.stream_stream(
-                '/ChatsApp.user.UserChatService/ReceiveUserMessage',
-                request_serializer=user__pb2.ReceiveMessageRequest.SerializeToString,
-                response_deserializer=user__pb2.ReceiveMessageResponse.FromString,
+                '/ChatsApp.group.UserChatService/ReceiveUserMessage',
+                request_serializer=groups__pb2.ReceiveMessageRequest.SerializeToString,
+                response_deserializer=groups__pb2.ReceiveMessageResponse.FromString,
                 _registered_method=True)
 
 
 class UserChatServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
-
-    def LoadUserMessage(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
 
     def SendUserMessage(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
@@ -75,58 +64,26 @@ class UserChatServiceServicer(object):
 
 def add_UserChatServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'LoadUserMessage': grpc.unary_unary_rpc_method_handler(
-                    servicer.LoadUserMessage,
-                    request_deserializer=user__pb2.LoadMessageRequest.FromString,
-                    response_serializer=user__pb2.LoadMessageResponse.SerializeToString,
-            ),
             'SendUserMessage': grpc.stream_stream_rpc_method_handler(
                     servicer.SendUserMessage,
-                    request_deserializer=user__pb2.SendMessageRequest.FromString,
-                    response_serializer=user__pb2.SendMessageResponse.SerializeToString,
+                    request_deserializer=groups__pb2.SendMessageRequest.FromString,
+                    response_serializer=groups__pb2.SendMessageResponse.SerializeToString,
             ),
             'ReceiveUserMessage': grpc.stream_stream_rpc_method_handler(
                     servicer.ReceiveUserMessage,
-                    request_deserializer=user__pb2.ReceiveMessageRequest.FromString,
-                    response_serializer=user__pb2.ReceiveMessageResponse.SerializeToString,
+                    request_deserializer=groups__pb2.ReceiveMessageRequest.FromString,
+                    response_serializer=groups__pb2.ReceiveMessageResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'ChatsApp.user.UserChatService', rpc_method_handlers)
+            'ChatsApp.group.UserChatService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('ChatsApp.user.UserChatService', rpc_method_handlers)
+    server.add_registered_method_handlers('ChatsApp.group.UserChatService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
 class UserChatService(object):
     """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def LoadUserMessage(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/ChatsApp.user.UserChatService/LoadUserMessage',
-            user__pb2.LoadMessageRequest.SerializeToString,
-            user__pb2.LoadMessageResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
 
     @staticmethod
     def SendUserMessage(request_iterator,
@@ -142,9 +99,9 @@ class UserChatService(object):
         return grpc.experimental.stream_stream(
             request_iterator,
             target,
-            '/ChatsApp.user.UserChatService/SendUserMessage',
-            user__pb2.SendMessageRequest.SerializeToString,
-            user__pb2.SendMessageResponse.FromString,
+            '/ChatsApp.group.UserChatService/SendUserMessage',
+            groups__pb2.SendMessageRequest.SerializeToString,
+            groups__pb2.SendMessageResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -169,9 +126,9 @@ class UserChatService(object):
         return grpc.experimental.stream_stream(
             request_iterator,
             target,
-            '/ChatsApp.user.UserChatService/ReceiveUserMessage',
-            user__pb2.ReceiveMessageRequest.SerializeToString,
-            user__pb2.ReceiveMessageResponse.FromString,
+            '/ChatsApp.group.UserChatService/ReceiveUserMessage',
+            groups__pb2.ReceiveMessageRequest.SerializeToString,
+            groups__pb2.ReceiveMessageResponse.FromString,
             options,
             channel_credentials,
             insecure,

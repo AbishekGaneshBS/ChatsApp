@@ -5,6 +5,28 @@ var grpc = require('@grpc/grpc-js');
 var user_pb = require('./user_pb.js');
 var common_pb = require('./common_pb.js');
 
+function serialize_ChatsApp_user_LoadMessageRequest(arg) {
+  if (!(arg instanceof user_pb.LoadMessageRequest)) {
+    throw new Error('Expected argument of type ChatsApp.user.LoadMessageRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_ChatsApp_user_LoadMessageRequest(buffer_arg) {
+  return user_pb.LoadMessageRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_ChatsApp_user_LoadMessageResponse(arg) {
+  if (!(arg instanceof user_pb.LoadMessageResponse)) {
+    throw new Error('Expected argument of type ChatsApp.user.LoadMessageResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_ChatsApp_user_LoadMessageResponse(buffer_arg) {
+  return user_pb.LoadMessageResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_ChatsApp_user_ReceiveMessageRequest(arg) {
   if (!(arg instanceof user_pb.ReceiveMessageRequest)) {
     throw new Error('Expected argument of type ChatsApp.user.ReceiveMessageRequest');
@@ -51,6 +73,17 @@ function deserialize_ChatsApp_user_SendMessageResponse(buffer_arg) {
 
 
 var UserChatServiceService = exports.UserChatServiceService = {
+  loadUserMessage: {
+    path: '/ChatsApp.user.UserChatService/LoadUserMessage',
+    requestStream: false,
+    responseStream: false,
+    requestType: user_pb.LoadMessageRequest,
+    responseType: user_pb.LoadMessageResponse,
+    requestSerialize: serialize_ChatsApp_user_LoadMessageRequest,
+    requestDeserialize: deserialize_ChatsApp_user_LoadMessageRequest,
+    responseSerialize: serialize_ChatsApp_user_LoadMessageResponse,
+    responseDeserialize: deserialize_ChatsApp_user_LoadMessageResponse,
+  },
   sendUserMessage: {
     path: '/ChatsApp.user.UserChatService/SendUserMessage',
     requestStream: true,

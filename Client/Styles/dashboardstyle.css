@@ -1,0 +1,308 @@
+/* Base Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+    height: 100vh;
+    background-color: #e9f0fa; /* Light Blue Background */
+}
+
+/* WhatsApp Container */
+.whatsapp-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 30%;
+    min-width: 300px;
+    border-right: 1px solid #cfd8e3;
+    display: flex;
+    flex-direction: column;
+    background-color: #f0f6ff; /* Soft Blue */
+}
+
+/* Sidebar Header */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space out icons */
+    padding: 12px 16px;
+    background-color: #0066cc; /* Dark Blue */
+    color: #fff; /* White text */
+    border-bottom: 1px solid #004c99; /* Darker Blue */
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e3eaf7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #004c99; /* Dark Blue */
+}
+
+/* Sidebar Icons */
+.sidebar-icons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 18px;
+}
+
+.sidebar-icons i {
+    cursor: pointer;
+    color: #fff;
+    transition: 0.3s;
+}
+
+.sidebar-icons i:hover {
+    color: #cfd8e3; /* Lighter Blue */
+}
+
+/* Logout Button */
+.logout-button {
+    background-color: #004c99; /* Dark Blue */
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.logout-button:hover {
+    background-color: #003366; /* Even Darker Blue */
+}
+
+/* Chat List */
+.chat-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    background-color: #ffffff;
+}
+
+.chat-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #e3eaf7;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.chat-item:hover {
+    background-color: #e3eaf7;
+}
+
+.chat-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #dfe5e7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 12px;
+    color: #004c99;
+}
+
+/* Chat Area */
+.chat-area {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #e9f0fa;
+}
+
+/* No Chat Selected */
+.no-chat-selected {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #004c99;
+    text-align: center;
+}
+
+.no-chat-selected i {
+    font-size: 100px;
+    margin-bottom: 15px;
+    color: #cfd8e3;
+}
+
+/* Active Chat */
+#activeChat {
+    display: none;
+    height: 100%;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background-color: #0066cc;
+    color: white;
+    border-bottom: 1px solid #004c99;
+}
+
+.chat-header-info {
+    display: flex;
+    align-items: center;
+}
+
+.chat-header-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #dfe5e7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 12px;
+}
+
+/* Messages Container */
+.messages-container {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.message {
+    max-width: 60%;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    word-wrap: break-word;
+    display: flex;
+    align-items: center;
+}
+
+.message.sent {
+    background-color: #99ccff; /* Light Blue */
+    color: #003366; /* Darker Text */
+    margin-left: auto;
+}
+
+.message.received {
+    background-color: #ffffff;
+    margin-right: auto;
+    border: 1px solid #cfd8e3;
+}
+
+/* Input Area - Improved */
+.input-area {
+    display: flex;
+    align-items: flex-end; /* Align to bottom for multi-line input */
+    padding: 12px 16px;
+    background-color: #ffffff;
+    border-top: 1px solid #cfd8e3;
+    gap: 10px;
+}
+
+.message-input-container {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    background-color: #e9f0fa;
+    border-radius: 8px;
+    padding: 8px 12px;
+    min-height: 40px;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.message-input {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    resize: none;
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.4;
+    padding: 0;
+    max-height: 100px;
+    overflow-y: auto;
+    word-wrap: break-word;
+}
+
+.message-input:empty::before {
+    content: "Type a message...";
+    color: #7a8fa6;
+}
+
+.send-button {
+    color: #0066cc;
+    cursor: pointer;
+    font-size: 24px;
+    padding: 8px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+
+.send-button:hover {
+    transform: scale(1.1);
+}
+
+.send-button:active {
+    transform: scale(0.95);
+}
+
+/* Dropdown Styles */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #ffffff;
+    min-width: 120px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 8px;
+    border: 1px solid #cfd8e3;
+}
+
+.dropdown-content a {
+    color: #004c99;
+    padding: 8px 12px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+}
+
+.dropdown-content.show {
+    display: block;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
