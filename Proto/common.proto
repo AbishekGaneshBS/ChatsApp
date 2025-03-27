@@ -17,6 +17,11 @@ message User {
     string display_name = 3;   
 }
 
+message Group {
+    int32 group_id = 1;
+    string group_name = 2;
+}
+
 enum MessageResponseStatus {
     MESSAGESUCCESS = 0;                
     MESSAGEFAILURE = 1;                        
@@ -25,4 +30,5 @@ enum MessageResponseStatus {
 message MessageUser {
     int32 user_id = 1;          
     string user_name = 2;
+    string timestamp = 3;
 }

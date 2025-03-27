@@ -20,7 +20,8 @@ message CreateAccountResponse {
     ChatsApp.common.ResponseStatus status = 1;  
     ChatsApp.common.User myself = 2;
     repeated ChatsApp.common.User contacts = 3;
-    string url = 4;      
+    string url = 4;
+    repeated ChatsApp.common.Group groups = 5;
 }
 
 message LoginAccountResponse {
@@ -28,6 +29,7 @@ message LoginAccountResponse {
     ChatsApp.common.User myself = 2;
     repeated ChatsApp.common.User contacts = 3;
     string url = 4;
+    repeated ChatsApp.common.Group groups = 5;
        
 }
 

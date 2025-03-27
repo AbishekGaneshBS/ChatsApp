@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-package ChatsApp.user;
+package ChatsApp.group;
 
 import "common.proto";
 
 message LoadMessageRequest {
     ChatsApp.common.MessageUser fromuser = 1;
-    ChatsApp.common.MessageUser touser = 2;
+    int32 groupid = 2;
 }
 
 message LoadMessageResponse {
@@ -17,17 +17,18 @@ message LoadMessageResponse {
 }
 
 message ReceiveMessageRequest {
-    ChatsApp.common.MessageUser fromuser = 1; 
+    ChatsApp.common.MessageUser fromuser = 1;
 }
 
 message ReceiveMessageResponse {
     ChatsApp.common.MessageUser fromuser = 1;
     string textmessage = 2;
+    int32 groupid = 3;
 }
 
 message SendMessageRequest {
     ChatsApp.common.MessageUser fromuser = 1;
-    ChatsApp.common.MessageUser touser = 2;    
+    int32 groupid = 2; 
     string textmessage = 3; 
 }
 
@@ -37,7 +38,6 @@ message SendMessageResponse{
 
 
 service UserChatService {
-    rpc LoadUserMessage(LoadMessageRequest) returns (LoadMessageResponse) {};
-    rpc SendUserMessage(stream SendMessageRequest) returns (stream SendMessageResponse) {};
-    rpc ReceiveUserMessage(stream ReceiveMessageRequest) returns (stream ReceiveMessageResponse) {};
+    rpc SendUserMessage(stream SendMessageRequest) returns (stream SendMessageResponse);
+    rpc ReceiveUserMessage(stream ReceiveMessageRequest) returns (stream ReceiveMessageResponse);
 }
