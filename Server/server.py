@@ -3,10 +3,12 @@ import sqlite3
 import grpc
 import bcrypt
 from pathlib import Path
-import common_pb2
-import auth_pb2, auth_pb2_grpc
-import threading
 import sys
+sys.path.append("Services") 
+from Services import common_pb2
+from Services import auth_pb2, auth_pb2_grpc
+import threading
+
 
 DB_PATH = 'DataBase/database.db'
 SERVER_PORT = '[::]:8000'

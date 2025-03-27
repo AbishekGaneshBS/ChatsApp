@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package ChatsApp.user;
+
+import "common.proto";
+
+message ReceiveMessageRequest {
+    ChatsApp.common.MessageUser fromuser = 1; 
+}
+
+message ReceiveMessageResponse {
+    ChatsApp.common.MessageUser fromuser = 1;
+    string textmessage = 2;
+}
+
+message SendMessageRequest {
+    ChatsApp.common.MessageUser fromuser = 1;
+    ChatsApp.common.MessageUser touser = 2;    
+    string textmessage = 3; 
+}
+
+message SendMessageResponse{
+    ChatsApp.common.MessageResponseStatus response = 1;
+}
+
+
+service UserChatService {
+    rpc SendUserMessage(stream SendMessageRequest) returns (stream SendMessageResponse);
+    rpc ReceiveUserMessage(stream ReceiveMessageRequest) returns (stream ReceiveMessageResponse);
+}

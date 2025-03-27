@@ -1,4 +1,6 @@
-python3 -m grpc_tools.protoc -I. --python_out=../Server --grpc_python_out=../Server common.proto
-python3 -m grpc_tools.protoc -I. --python_out=../Server --grpc_python_out=../Server auth.proto
-npx grpc_tools_node_protoc   --js_out=import_style=commonjs,binary:../Server   --grpc_out=grpc_js:../Server   --proto_path=../Proto   common.proto
-npx grpc_tools_node_protoc   --js_out=import_style=commonjs,binary:../Server   --grpc_out=grpc_js:../Server   --proto_path=../Proto   auth.proto
+python3 -m grpc_tools.protoc -I. --python_out=../Server/Services --grpc_python_out=../Server/Services common.proto
+python3 -m grpc_tools.protoc -I. --python_out=../Server/Services --grpc_python_out=../Server/Services auth.proto
+python3 -m grpc_tools.protoc -I. --python_out=../Server/Services --grpc_python_out=../Server/Services user.proto
+npx grpc_tools_node_protoc   --js_out=import_style=commonjs,binary:../Server/Services   --grpc_out=grpc_js:../Server/Services   --proto_path=   common.proto
+npx grpc_tools_node_protoc   --js_out=import_style=commonjs,binary:../Server/Services   --grpc_out=grpc_js:../Server/Services   --proto_path=   auth.proto
+npx grpc_tools_node_protoc   --js_out=import_style=commonjs,binary:../Server/Services   --grpc_out=grpc_js:../Server/Services   --proto_path=   user.proto

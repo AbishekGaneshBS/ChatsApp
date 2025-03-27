@@ -4,9 +4,9 @@ const grpc = require('@grpc/grpc-js');
 const ejs = require('ejs');
 const session = require('express-session');
 
-const auth_pb = require('./auth_pb');
-const auth_pb_grpc = require('./auth_grpc_pb');
-const common_pb = require('./common_pb');
+const auth_pb = require('./Services/auth_pb');
+const auth_pb_grpc = require('./Services/auth_grpc_pb');
+const common_pb = require('./Services/common_pb');
 
 const app = express();
 const PORT = 3000;

@@ -5,11 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login and Register</title>
   <link rel="stylesheet" href="../Styles/styles.css">
+  <style>
+    .hidden {
+      display: none;
+    }
+    .success-message {
+      color: green;
+      margin: 10px 0;
+      text-align: center;
+    }
+    .error-message {
+      color: red;
+      margin: 10px 0;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
+    <% if (message) { %>
+      <div class="<%= message.includes('successful') ? 'success-message' : 'error-message' %>">
+        <%= message %>
+      </div>
+    <% } %>
 
-    <div id="login-form" class="form">
+    <div id="login-form" class="form <%= formToShow !== 'login' ? 'hidden' : '' %>">
       <h2>Login</h2>
       <form id="login" action="/login" method="POST">
         <input type="text" id="login-username" name="username" placeholder="Username" required>
@@ -20,8 +40,7 @@
       <p>Don't have an account? <a href="#" id="show-register">Register</a></p>
     </div>
 
- 
-    <div id="register-form" class="form hidden">
+    <div id="register-form" class="form <%= formToShow !== 'register' ? 'hidden' : '' %>">
       <h2>Register</h2>
       <form id="register" action="/register" method="POST">
         <input type="text" id="register-username" name="username" placeholder="Username" required>
@@ -51,33 +70,39 @@
       switchToLoginForm();
     });
 
-
     function switchToLoginForm() {
       registerSection.classList.add("hidden");
       loginSection.classList.remove("hidden");
+      history.pushState(null, '', '/?form=login');
     }
-
 
     function switchToRegisterForm() {
       loginSection.classList.add("hidden");
       registerSection.classList.remove("hidden");
+      history.pushState(null, '', '/?form=register');
     }
-
 
     document.getElementById("forgot-password").addEventListener("click", (e) => {
       e.preventDefault();
       alert("Please contact support to reset your password.");
     });
 
+  
+    <% if (url && message && message.includes('successful')) { %>
+      window.location.href = "<%= url %>";
+    <% } %>
 
-    const message = "<%= message %>";
-    const url = "<%= url %>"; 
-    if (message) {
-      alert(message);
-      if (message.includes("successful") && url) { 
-        window.location.href = url;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const formParam = urlParams.get('form');
+      
+      if (formParam === 'register') {
+        switchToRegisterForm();
+      } else if (formParam === 'login') {
+        switchToLoginForm();
       }
-    }
+    });
   </script>
 </body>
 </html>

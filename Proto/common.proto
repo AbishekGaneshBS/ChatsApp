@@ -16,3 +16,13 @@ message User {
     string user_name = 2;      
     string display_name = 3;   
 }
+
+enum MessageResponseStatus {
+    MESSAGESUCCESS = 0;                
+    MESSAGEFAILURE = 1;                        
+}
+
+message MessageUser {
+    int32 user_id = 1;          
+    string user_name = 2;
+}
