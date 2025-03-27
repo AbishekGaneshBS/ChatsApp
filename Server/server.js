@@ -3,6 +3,7 @@ const path = require('path');
 const grpc = require('@grpc/grpc-js');
 const ejs = require('ejs');
 const session = require('express-session');
+const cookieParser = require('cookie-parser');
 
 const auth_pb = require('./Services/auth_pb');
 const auth_pb_grpc = require('./Services/auth_grpc_pb');
@@ -11,12 +12,16 @@ const common_pb = require('./Services/common_pb');
 const app = express();
 const PORT = 3000;
 
-
+// Middleware setup
+app.use(cookieParser());
 app.use(session({
   secret: 'your-secret-key',
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } 
+  cookie: { 
+    secure: false,
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  } 
 }));
 
 const client = new auth_pb_grpc.AccountServiceClient(
@@ -24,6 +29,7 @@ const client = new auth_pb_grpc.AccountServiceClient(
   grpc.credentials.createInsecure()
 );
 
+// View engine setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../Client/Views'));
 
@@ -31,7 +37,18 @@ app.use(express.static(path.join(__dirname, '../Client')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Middleware to check auth cookie
+const checkAuth = (req, res, next) => {
+  if (req.cookies.authToken) {
+    // Verify token with gRPC service if needed
+    req.isAuthenticated = true;
+  }
+  next();
+};
 
+app.use(checkAuth);
+
+// Helper function
 function transformUserData(response) {
   return {
     url: response.getUrl(),
@@ -48,20 +65,32 @@ function transformUserData(response) {
   };
 }
 
-
+// Routes
 app.get('/', (req, res) => {
+  if (req.isAuthenticated) {
+    return res.redirect('/main');
+  }
+
   const flash = req.session.flash;
-  delete req.session.flash; 
+  delete req.session.flash;
   
   res.render('index', {
     message: flash?.message || null,
     url: flash?.url || null,
     myself: flash?.myself || null,
     contacts: flash?.contacts || null,
-    formToShow: flash?.formToShow || 'login' 
+    formToShow: flash?.formToShow || 'login'
   });
 });
 
+app.get('/main', (req, res) => {
+  if (!req.isAuthenticated) {
+    return res.redirect('/');
+  }
+  res.render('main', { 
+    user: req.session.user,
+  });
+});
 
 app.post('/register', (req, res) => {
   const { username, displayName, password } = req.body;
@@ -103,7 +132,6 @@ app.post('/register', (req, res) => {
   });
 });
 
-
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -123,12 +151,17 @@ app.post('/login', (req, res) => {
 
     const status = response.getStatus();
     if (status === common_pb.ResponseStatus.SUCCESS) {
-      req.session.flash = {
-        message: 'Login successful!',
-        ...transformUserData(response)
-      };
+      const userData = transformUserData(response);
+      
+  
+      req.session.user = userData.myself;
+      req.session.contacts = userData.contacts;
+      res.cookie('authToken', 'your-auth-token', { 
+        maxAge: 24 * 60 * 60 * 1000, 
+        httpOnly: true
+      });
 
-      return res.redirect(response.getUrl());
+      return res.redirect('/main');
     } else if (status === common_pb.ResponseStatus.ACCOUNT_NOT_FOUND) {
       req.session.flash = {
         message: 'Account not found.',
@@ -147,6 +180,12 @@ app.post('/login', (req, res) => {
     }
     res.redirect('/');
   });
+});
+
+app.get('/logout', (req, res) => {
+  res.clearCookie('authToken');
+  req.session.destroy();
+  res.redirect('/');
 });
 
 app.listen(PORT, () => {

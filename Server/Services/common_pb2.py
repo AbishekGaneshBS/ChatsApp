@@ -24,19 +24,21 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0c\x63ommon.proto\x12\x0f\x43hatsApp.common\"@\n\x04User\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x11\n\tuser_name\x18\x02 \x01(\t\x12\x14\n\x0c\x64isplay_name\x18\x03 \x01(\t\"1\n\x0bMessageUser\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x11\n\tuser_name\x18\x02 \x01(\t*z\n\x0eResponseStatus\x12\x0b\n\x07SUCCESS\x10\x00\x12\x0b\n\x07\x46\x41ILURE\x10\x01\x12\x11\n\rINVALID_INPUT\x10\x02\x12\x12\n\x0e\x41\x43\x43OUNT_EXISTS\x10\x03\x12\x15\n\x11\x41\x43\x43OUNT_NOT_FOUND\x10\x04\x12\x10\n\x0cUNAUTHORIZED\x10\x05*?\n\x15MessageResponseStatus\x12\x12\n\x0eMESSAGESUCCESS\x10\x00\x12\x12\n\x0eMESSAGEFAILURE\x10\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0c\x63ommon.proto\x12\x0f\x43hatsApp.common\"@\n\x04User\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x11\n\tuser_name\x18\x02 \x01(\t\x12\x14\n\x0c\x64isplay_name\x18\x03 \x01(\t\"-\n\x05Group\x12\x10\n\x08group_id\x18\x01 \x01(\x05\x12\x12\n\ngroup_name\x18\x02 \x01(\t\"D\n\x0bMessageUser\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x11\n\tuser_name\x18\x02 \x01(\t\x12\x11\n\ttimestamp\x18\x03 \x01(\t*z\n\x0eResponseStatus\x12\x0b\n\x07SUCCESS\x10\x00\x12\x0b\n\x07\x46\x41ILURE\x10\x01\x12\x11\n\rINVALID_INPUT\x10\x02\x12\x12\n\x0e\x41\x43\x43OUNT_EXISTS\x10\x03\x12\x15\n\x11\x41\x43\x43OUNT_NOT_FOUND\x10\x04\x12\x10\n\x0cUNAUTHORIZED\x10\x05*?\n\x15MessageResponseStatus\x12\x12\n\x0eMESSAGESUCCESS\x10\x00\x12\x12\n\x0eMESSAGEFAILURE\x10\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'common_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_RESPONSESTATUS']._serialized_start=150
-  _globals['_RESPONSESTATUS']._serialized_end=272
-  _globals['_MESSAGERESPONSESTATUS']._serialized_start=274
-  _globals['_MESSAGERESPONSESTATUS']._serialized_end=337
+  _globals['_RESPONSESTATUS']._serialized_start=216
+  _globals['_RESPONSESTATUS']._serialized_end=338
+  _globals['_MESSAGERESPONSESTATUS']._serialized_start=340
+  _globals['_MESSAGERESPONSESTATUS']._serialized_end=403
   _globals['_USER']._serialized_start=33
   _globals['_USER']._serialized_end=97
-  _globals['_MESSAGEUSER']._serialized_start=99
-  _globals['_MESSAGEUSER']._serialized_end=148
+  _globals['_GROUP']._serialized_start=99
+  _globals['_GROUP']._serialized_end=144
+  _globals['_MESSAGEUSER']._serialized_start=146
+  _globals['_MESSAGEUSER']._serialized_end=214
 # @@protoc_insertion_point(module_scope)

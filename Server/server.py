@@ -47,6 +47,12 @@ def get_all_users_except(username: str):
         cursor.execute("SELECT User_ID, User_Name, Display_Name FROM Users WHERE User_Name != ?", (username.strip(),))
         return cursor.fetchall()
 
+def get_all_groups(username: str):
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT gm.Group_ID, g.Group_Name FROM GroupMembers gm JOIN Users u ON gm.User_ID = u.User_ID JOIN Groups g ON gm.Group_ID = g.Group_ID WHERE u.User_Name = ?;", (username.strip(),))
+        return cursor.fetchall()
+
 def create_user(username: str, display_name: str, password: str):
     hashed_password = hash_password(password)
     with sqlite3.connect(DB_PATH) as conn:
@@ -71,12 +77,13 @@ class AccountService(auth_pb2_grpc.AccountServiceServicer):
             user = common_pb2.User(user_id=user_id, user_name=user_name, display_name=display_name)
             
             contacts = [common_pb2.User(user_id=u[0], user_name=u[1], display_name=u[2]) for u in get_all_users_except(request.user_name)]
-            
+            groups = [common_pb2.Group(group_id=u[0], group_name=u[1]) for u in get_all_groups(request.user_name)]
             return auth_pb2.CreateAccountResponse(
                 status=common_pb2.ResponseStatus.SUCCESS,
                 myself=user,
                 contacts=contacts,
-                url="http://ChatsApp/Main"
+                url="/DashBoard",
+                groups = groups
             )
             
         except Exception as e:
@@ -96,12 +103,13 @@ class AccountService(auth_pb2_grpc.AccountServiceServicer):
             user = common_pb2.User(user_id=user_id, user_name=user_name, display_name=display_name)
             
             contacts = [common_pb2.User(user_id=u[0], user_name=u[1], display_name=u[2]) for u in get_all_users_except(request.user_name)]
-            
+            groups = [common_pb2.Group(group_id=u[0], group_name=u[1]) for u in get_all_groups(request.user_name)]
             return auth_pb2.LoginAccountResponse(
                 status=common_pb2.ResponseStatus.SUCCESS,
                 myself=user,
                 contacts=contacts,
-                url="http://ChatsApp/Main"
+                url="/DashBoard",
+                groups = groups
             )
             
         except Exception as e:

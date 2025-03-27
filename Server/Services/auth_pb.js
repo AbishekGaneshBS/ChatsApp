@@ -467,7 +467,7 @@ proto.ChatsApp.auth.LoginAccountRequest.prototype.setPassword = function(value) 
  * @private {!Array<number>}
  * @const
  */
-proto.ChatsApp.auth.CreateAccountResponse.repeatedFields_ = [3];
+proto.ChatsApp.auth.CreateAccountResponse.repeatedFields_ = [3,5];
 
 
 
@@ -504,7 +504,9 @@ proto.ChatsApp.auth.CreateAccountResponse.toObject = function(includeInstance, m
     myself: (f = msg.getMyself()) && common_pb.User.toObject(includeInstance, f),
     contactsList: jspb.Message.toObjectList(msg.getContactsList(),
     common_pb.User.toObject, includeInstance),
-    url: jspb.Message.getFieldWithDefault(msg, 4, "")
+    url: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    groupsList: jspb.Message.toObjectList(msg.getGroupsList(),
+    common_pb.Group.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -558,6 +560,11 @@ proto.ChatsApp.auth.CreateAccountResponse.deserializeBinaryFromReader = function
     case 4:
       var value = /** @type {string} */ (reader.readString());
       msg.setUrl(value);
+      break;
+    case 5:
+      var value = new common_pb.Group;
+      reader.readMessage(value,common_pb.Group.deserializeBinaryFromReader);
+      msg.addGroups(value);
       break;
     default:
       reader.skipField();
@@ -616,6 +623,14 @@ proto.ChatsApp.auth.CreateAccountResponse.serializeBinaryToWriter = function(mes
     writer.writeString(
       4,
       f
+    );
+  }
+  f = message.getGroupsList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      5,
+      f,
+      common_pb.Group.serializeBinaryToWriter
     );
   }
 };
@@ -732,13 +747,51 @@ proto.ChatsApp.auth.CreateAccountResponse.prototype.setUrl = function(value) {
 };
 
 
+/**
+ * repeated ChatsApp.common.Group groups = 5;
+ * @return {!Array<!proto.ChatsApp.common.Group>}
+ */
+proto.ChatsApp.auth.CreateAccountResponse.prototype.getGroupsList = function() {
+  return /** @type{!Array<!proto.ChatsApp.common.Group>} */ (
+    jspb.Message.getRepeatedWrapperField(this, common_pb.Group, 5));
+};
+
+
+/**
+ * @param {!Array<!proto.ChatsApp.common.Group>} value
+ * @return {!proto.ChatsApp.auth.CreateAccountResponse} returns this
+*/
+proto.ChatsApp.auth.CreateAccountResponse.prototype.setGroupsList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 5, value);
+};
+
+
+/**
+ * @param {!proto.ChatsApp.common.Group=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.ChatsApp.common.Group}
+ */
+proto.ChatsApp.auth.CreateAccountResponse.prototype.addGroups = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 5, opt_value, proto.ChatsApp.common.Group, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.ChatsApp.auth.CreateAccountResponse} returns this
+ */
+proto.ChatsApp.auth.CreateAccountResponse.prototype.clearGroupsList = function() {
+  return this.setGroupsList([]);
+};
+
+
 
 /**
  * List of repeated fields within this message type.
  * @private {!Array<number>}
  * @const
  */
-proto.ChatsApp.auth.LoginAccountResponse.repeatedFields_ = [3];
+proto.ChatsApp.auth.LoginAccountResponse.repeatedFields_ = [3,5];
 
 
 
@@ -775,7 +828,9 @@ proto.ChatsApp.auth.LoginAccountResponse.toObject = function(includeInstance, ms
     myself: (f = msg.getMyself()) && common_pb.User.toObject(includeInstance, f),
     contactsList: jspb.Message.toObjectList(msg.getContactsList(),
     common_pb.User.toObject, includeInstance),
-    url: jspb.Message.getFieldWithDefault(msg, 4, "")
+    url: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    groupsList: jspb.Message.toObjectList(msg.getGroupsList(),
+    common_pb.Group.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -829,6 +884,11 @@ proto.ChatsApp.auth.LoginAccountResponse.deserializeBinaryFromReader = function(
     case 4:
       var value = /** @type {string} */ (reader.readString());
       msg.setUrl(value);
+      break;
+    case 5:
+      var value = new common_pb.Group;
+      reader.readMessage(value,common_pb.Group.deserializeBinaryFromReader);
+      msg.addGroups(value);
       break;
     default:
       reader.skipField();
@@ -887,6 +947,14 @@ proto.ChatsApp.auth.LoginAccountResponse.serializeBinaryToWriter = function(mess
     writer.writeString(
       4,
       f
+    );
+  }
+  f = message.getGroupsList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      5,
+      f,
+      common_pb.Group.serializeBinaryToWriter
     );
   }
 };
@@ -1000,6 +1068,44 @@ proto.ChatsApp.auth.LoginAccountResponse.prototype.getUrl = function() {
  */
 proto.ChatsApp.auth.LoginAccountResponse.prototype.setUrl = function(value) {
   return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * repeated ChatsApp.common.Group groups = 5;
+ * @return {!Array<!proto.ChatsApp.common.Group>}
+ */
+proto.ChatsApp.auth.LoginAccountResponse.prototype.getGroupsList = function() {
+  return /** @type{!Array<!proto.ChatsApp.common.Group>} */ (
+    jspb.Message.getRepeatedWrapperField(this, common_pb.Group, 5));
+};
+
+
+/**
+ * @param {!Array<!proto.ChatsApp.common.Group>} value
+ * @return {!proto.ChatsApp.auth.LoginAccountResponse} returns this
+*/
+proto.ChatsApp.auth.LoginAccountResponse.prototype.setGroupsList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 5, value);
+};
+
+
+/**
+ * @param {!proto.ChatsApp.common.Group=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.ChatsApp.common.Group}
+ */
+proto.ChatsApp.auth.LoginAccountResponse.prototype.addGroups = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 5, opt_value, proto.ChatsApp.common.Group, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.ChatsApp.auth.LoginAccountResponse} returns this
+ */
+proto.ChatsApp.auth.LoginAccountResponse.prototype.clearGroupsList = function() {
+  return this.setGroupsList([]);
 };
 
 
