@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ChatsApp.common;
+
+enum ResponseStatus {
+    SUCCESS = 0;                
+    FAILURE = 1;                
+    INVALID_INPUT = 2;          
+    ACCOUNT_EXISTS = 3;         
+    ACCOUNT_NOT_FOUND = 4;      
+    UNAUTHORIZED = 5;           
+}
+
+message User {
+    int32 user_id = 1;          
+    string user_name = 2;      
+    string display_name = 3;   
+}

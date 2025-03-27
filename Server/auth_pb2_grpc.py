@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import createorlogin_pb2 as createorlogin__pb2
+import auth_pb2 as auth__pb2
 
 GRPC_GENERATED_VERSION = '1.71.0'
 GRPC_VERSION = grpc.__version__
@@ -18,7 +18,7 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in createorlogin_pb2_grpc.py depends on'
+        + f' but the generated code in auth_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -35,14 +35,14 @@ class AccountServiceStub(object):
             channel: A grpc.Channel.
         """
         self.CreateAccount = channel.unary_unary(
-                '/createorlogin.v1.AccountService/CreateAccount',
-                request_serializer=createorlogin__pb2.CreateAccountRequest.SerializeToString,
-                response_deserializer=createorlogin__pb2.CreateAccountResponse.FromString,
+                '/ChatsApp.auth.AccountService/CreateAccount',
+                request_serializer=auth__pb2.CreateAccountRequest.SerializeToString,
+                response_deserializer=auth__pb2.CreateAccountResponse.FromString,
                 _registered_method=True)
         self.LoginAccount = channel.unary_unary(
-                '/createorlogin.v1.AccountService/LoginAccount',
-                request_serializer=createorlogin__pb2.LoginAccountRequest.SerializeToString,
-                response_deserializer=createorlogin__pb2.LoginAccountResponse.FromString,
+                '/ChatsApp.auth.AccountService/LoginAccount',
+                request_serializer=auth__pb2.LoginAccountRequest.SerializeToString,
+                response_deserializer=auth__pb2.LoginAccountResponse.FromString,
                 _registered_method=True)
 
 
@@ -66,19 +66,19 @@ def add_AccountServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'CreateAccount': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateAccount,
-                    request_deserializer=createorlogin__pb2.CreateAccountRequest.FromString,
-                    response_serializer=createorlogin__pb2.CreateAccountResponse.SerializeToString,
+                    request_deserializer=auth__pb2.CreateAccountRequest.FromString,
+                    response_serializer=auth__pb2.CreateAccountResponse.SerializeToString,
             ),
             'LoginAccount': grpc.unary_unary_rpc_method_handler(
                     servicer.LoginAccount,
-                    request_deserializer=createorlogin__pb2.LoginAccountRequest.FromString,
-                    response_serializer=createorlogin__pb2.LoginAccountResponse.SerializeToString,
+                    request_deserializer=auth__pb2.LoginAccountRequest.FromString,
+                    response_serializer=auth__pb2.LoginAccountResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'createorlogin.v1.AccountService', rpc_method_handlers)
+            'ChatsApp.auth.AccountService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('createorlogin.v1.AccountService', rpc_method_handlers)
+    server.add_registered_method_handlers('ChatsApp.auth.AccountService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
@@ -99,9 +99,9 @@ class AccountService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/createorlogin.v1.AccountService/CreateAccount',
-            createorlogin__pb2.CreateAccountRequest.SerializeToString,
-            createorlogin__pb2.CreateAccountResponse.FromString,
+            '/ChatsApp.auth.AccountService/CreateAccount',
+            auth__pb2.CreateAccountRequest.SerializeToString,
+            auth__pb2.CreateAccountResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -126,9 +126,9 @@ class AccountService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/createorlogin.v1.AccountService/LoginAccount',
-            createorlogin__pb2.LoginAccountRequest.SerializeToString,
-            createorlogin__pb2.LoginAccountResponse.FromString,
+            '/ChatsApp.auth.AccountService/LoginAccount',
+            auth__pb2.LoginAccountRequest.SerializeToString,
+            auth__pb2.LoginAccountResponse.FromString,
             options,
             channel_credentials,
             insecure,

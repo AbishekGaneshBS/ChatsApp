@@ -1,2 +1,4 @@
-python3 -m grpc_tools.protoc -I. --python_out=../Server --grpc_python_out=../Server createorlogin.proto
-npx grpc_tools_node_protoc   --js_out=import_style=commonjs,binary:../Client   --grpc_out=grpc_js:../Client   --proto_path=../Proto   createorlogin.proto
+python3 -m grpc_tools.protoc -I. --python_out=../Server --grpc_python_out=../Server common.proto
+python3 -m grpc_tools.protoc -I. --python_out=../Server --grpc_python_out=../Server auth.proto
+npx grpc_tools_node_protoc   --js_out=import_style=commonjs,binary:../Server   --grpc_out=grpc_js:../Server   --proto_path=../Proto   common.proto
+npx grpc_tools_node_protoc   --js_out=import_style=commonjs,binary:../Server   --grpc_out=grpc_js:../Server   --proto_path=../Proto   auth.proto
