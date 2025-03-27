@@ -20,7 +20,7 @@ def initialize_database():
         cursor = conn.cursor()
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS Users (
-                User_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                userid INTEGER PRIMARY KEY AUTOINCREMENT,
                 User_Name TEXT NOT NULL UNIQUE,
                 Display_Name TEXT NOT NULL,
                 Password TEXT NOT NULL,
@@ -50,7 +50,7 @@ def get_all_users_except(username: str):
 def get_all_groups(username: str):
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT gm.Group_ID, g.Group_Name FROM GroupMembers gm JOIN Users u ON gm.User_ID = u.User_ID JOIN Groups g ON gm.Group_ID = g.Group_ID WHERE u.User_Name = ?;", (username.strip(),))
+        cursor.execute("SELECT gm.User_ID, g.Group_Name FROM GroupMembers gm JOIN Users u ON gm.User_ID = u.User_ID JOIN Groups g ON gm.Group_ID = g.Group_ID WHERE u.User_Name = ?;", (username.strip(),))
         return cursor.fetchall()
 
 def create_user(username: str, display_name: str, password: str):
@@ -64,20 +64,20 @@ def create_user(username: str, display_name: str, password: str):
 class AccountService(auth_pb2_grpc.AccountServiceServicer):
     def CreateAccount(self, request, context):
         try:
-            if get_user_by_username(request.user_name):
+            if get_user_by_username(request.username):
                 return auth_pb2.CreateAccountResponse(status=common_pb2.ResponseStatus.ACCOUNT_EXISTS)
             
-            user_id = create_user(request.user_name, request.display_name, request.password)
+            create_user(request.username, request.displayname, request.password)
             
-            user_data = get_user_by_username(request.user_name)
+            user_data = get_user_by_username(request.username)
             if not user_data:
                 return auth_pb2.CreateAccountResponse(status=common_pb2.ResponseStatus.FAILURE)
             
-            user_id, user_name, display_name, _ = user_data
-            user = common_pb2.User(user_id=user_id, user_name=user_name, display_name=display_name)
+            userid, user_name, display_name, _ = user_data
+            user = common_pb2.User(id=userid, username=user_name, displayname=display_name)
             
-            contacts = [common_pb2.User(user_id=u[0], user_name=u[1], display_name=u[2]) for u in get_all_users_except(request.user_name)]
-            groups = [common_pb2.Group(group_id=u[0], group_name=u[1]) for u in get_all_groups(request.user_name)]
+            contacts = [common_pb2.User(id=u[0], username=u[1], displayname=u[2]) for u in get_all_users_except(request.username)]
+            groups = [common_pb2.Group(groupid=u[0], groupname=u[1]) for u in get_all_groups(request.username)]
             return auth_pb2.CreateAccountResponse(
                 status=common_pb2.ResponseStatus.SUCCESS,
                 myself=user,
@@ -92,18 +92,18 @@ class AccountService(auth_pb2_grpc.AccountServiceServicer):
 
     def LoginAccount(self, request, context):
         try:
-            user_data = get_user_by_username(request.user_name)
+            user_data = get_user_by_username(request.username)
             if not user_data:
                 return auth_pb2.LoginAccountResponse(status=common_pb2.ResponseStatus.ACCOUNT_NOT_FOUND)
             
-            user_id, user_name, display_name, hashed_password = user_data
+            userid, user_name, display_name, hashed_password = user_data
             if not verify_password(request.password, hashed_password):
                 return auth_pb2.LoginAccountResponse(status=common_pb2.ResponseStatus.UNAUTHORIZED)
             
-            user = common_pb2.User(user_id=user_id, user_name=user_name, display_name=display_name)
+            user = common_pb2.User(id=userid, username=user_name, displayname=display_name)
             
-            contacts = [common_pb2.User(user_id=u[0], user_name=u[1], display_name=u[2]) for u in get_all_users_except(request.user_name)]
-            groups = [common_pb2.Group(group_id=u[0], group_name=u[1]) for u in get_all_groups(request.user_name)]
+            contacts = [common_pb2.User(id=u[0], username=u[1], displayname=u[2]) for u in get_all_users_except(request.username)]
+            groups = [common_pb2.Group(groupid=u[0], groupname=u[1]) for u in get_all_groups(request.username)]
             return auth_pb2.LoginAccountResponse(
                 status=common_pb2.ResponseStatus.SUCCESS,
                 myself=user,

@@ -73,8 +73,8 @@ function deserialize_ChatsApp_user_SendMessageResponse(buffer_arg) {
 
 
 var UserChatServiceService = exports.UserChatServiceService = {
-  loadUserMessage: {
-    path: '/ChatsApp.user.UserChatService/LoadUserMessage',
+  loadMessages: {
+    path: '/ChatsApp.user.UserChatService/LoadMessages',
     requestStream: false,
     responseStream: false,
     requestType: user_pb.LoadMessageRequest,
@@ -84,8 +84,8 @@ var UserChatServiceService = exports.UserChatServiceService = {
     responseSerialize: serialize_ChatsApp_user_LoadMessageResponse,
     responseDeserialize: deserialize_ChatsApp_user_LoadMessageResponse,
   },
-  sendUserMessage: {
-    path: '/ChatsApp.user.UserChatService/SendUserMessage',
+  sendMessages: {
+    path: '/ChatsApp.user.UserChatService/SendMessages',
     requestStream: true,
     responseStream: true,
     requestType: user_pb.SendMessageRequest,
@@ -95,8 +95,8 @@ var UserChatServiceService = exports.UserChatServiceService = {
     responseSerialize: serialize_ChatsApp_user_SendMessageResponse,
     responseDeserialize: deserialize_ChatsApp_user_SendMessageResponse,
   },
-  receiveUserMessage: {
-    path: '/ChatsApp.user.UserChatService/ReceiveUserMessage',
+  receiveMessages: {
+    path: '/ChatsApp.user.UserChatService/ReceiveMessages',
     requestStream: true,
     responseStream: true,
     requestType: user_pb.ReceiveMessageRequest,

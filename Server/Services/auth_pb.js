@@ -143,8 +143,8 @@ proto.ChatsApp.auth.CreateAccountRequest.prototype.toObject = function(opt_inclu
  */
 proto.ChatsApp.auth.CreateAccountRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    userName: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    displayName: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    username: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    displayname: jspb.Message.getFieldWithDefault(msg, 2, ""),
     password: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
@@ -184,11 +184,11 @@ proto.ChatsApp.auth.CreateAccountRequest.deserializeBinaryFromReader = function(
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setUserName(value);
+      msg.setUsername(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setDisplayName(value);
+      msg.setDisplayname(value);
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
@@ -223,14 +223,14 @@ proto.ChatsApp.auth.CreateAccountRequest.prototype.serializeBinary = function() 
  */
 proto.ChatsApp.auth.CreateAccountRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getUserName();
+  f = message.getUsername();
   if (f.length > 0) {
     writer.writeString(
       1,
       f
     );
   }
-  f = message.getDisplayName();
+  f = message.getDisplayname();
   if (f.length > 0) {
     writer.writeString(
       2,
@@ -248,10 +248,10 @@ proto.ChatsApp.auth.CreateAccountRequest.serializeBinaryToWriter = function(mess
 
 
 /**
- * optional string user_name = 1;
+ * optional string username = 1;
  * @return {string}
  */
-proto.ChatsApp.auth.CreateAccountRequest.prototype.getUserName = function() {
+proto.ChatsApp.auth.CreateAccountRequest.prototype.getUsername = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -260,16 +260,16 @@ proto.ChatsApp.auth.CreateAccountRequest.prototype.getUserName = function() {
  * @param {string} value
  * @return {!proto.ChatsApp.auth.CreateAccountRequest} returns this
  */
-proto.ChatsApp.auth.CreateAccountRequest.prototype.setUserName = function(value) {
+proto.ChatsApp.auth.CreateAccountRequest.prototype.setUsername = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
 /**
- * optional string display_name = 2;
+ * optional string displayname = 2;
  * @return {string}
  */
-proto.ChatsApp.auth.CreateAccountRequest.prototype.getDisplayName = function() {
+proto.ChatsApp.auth.CreateAccountRequest.prototype.getDisplayname = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -278,7 +278,7 @@ proto.ChatsApp.auth.CreateAccountRequest.prototype.getDisplayName = function() {
  * @param {string} value
  * @return {!proto.ChatsApp.auth.CreateAccountRequest} returns this
  */
-proto.ChatsApp.auth.CreateAccountRequest.prototype.setDisplayName = function(value) {
+proto.ChatsApp.auth.CreateAccountRequest.prototype.setDisplayname = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
 };
 
@@ -333,7 +333,7 @@ proto.ChatsApp.auth.LoginAccountRequest.prototype.toObject = function(opt_includ
  */
 proto.ChatsApp.auth.LoginAccountRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    userName: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    username: jspb.Message.getFieldWithDefault(msg, 1, ""),
     password: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
@@ -373,7 +373,7 @@ proto.ChatsApp.auth.LoginAccountRequest.deserializeBinaryFromReader = function(m
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setUserName(value);
+      msg.setUsername(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
@@ -408,7 +408,7 @@ proto.ChatsApp.auth.LoginAccountRequest.prototype.serializeBinary = function() {
  */
 proto.ChatsApp.auth.LoginAccountRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getUserName();
+  f = message.getUsername();
   if (f.length > 0) {
     writer.writeString(
       1,
@@ -426,10 +426,10 @@ proto.ChatsApp.auth.LoginAccountRequest.serializeBinaryToWriter = function(messa
 
 
 /**
- * optional string user_name = 1;
+ * optional string username = 1;
  * @return {string}
  */
-proto.ChatsApp.auth.LoginAccountRequest.prototype.getUserName = function() {
+proto.ChatsApp.auth.LoginAccountRequest.prototype.getUsername = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -438,7 +438,7 @@ proto.ChatsApp.auth.LoginAccountRequest.prototype.getUserName = function() {
  * @param {string} value
  * @return {!proto.ChatsApp.auth.LoginAccountRequest} returns this
  */
-proto.ChatsApp.auth.LoginAccountRequest.prototype.setUserName = function(value) {
+proto.ChatsApp.auth.LoginAccountRequest.prototype.setUsername = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
 

@@ -25,7 +25,7 @@ _sym_db = _symbol_database.Default()
 import common_pb2 as common__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nauth.proto\x12\rChatsApp.auth\x1a\x0c\x63ommon.proto\"Q\n\x14\x43reateAccountRequest\x12\x11\n\tuser_name\x18\x01 \x01(\t\x12\x14\n\x0c\x64isplay_name\x18\x02 \x01(\t\x12\x10\n\x08password\x18\x03 \x01(\t\":\n\x13LoginAccountRequest\x12\x11\n\tuser_name\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\xcd\x01\n\x15\x43reateAccountResponse\x12/\n\x06status\x18\x01 \x01(\x0e\x32\x1f.ChatsApp.common.ResponseStatus\x12%\n\x06myself\x18\x02 \x01(\x0b\x32\x15.ChatsApp.common.User\x12\'\n\x08\x63ontacts\x18\x03 \x03(\x0b\x32\x15.ChatsApp.common.User\x12\x0b\n\x03url\x18\x04 \x01(\t\x12&\n\x06groups\x18\x05 \x03(\x0b\x32\x16.ChatsApp.common.Group\"\xcc\x01\n\x14LoginAccountResponse\x12/\n\x06status\x18\x01 \x01(\x0e\x32\x1f.ChatsApp.common.ResponseStatus\x12%\n\x06myself\x18\x02 \x01(\x0b\x32\x15.ChatsApp.common.User\x12\'\n\x08\x63ontacts\x18\x03 \x03(\x0b\x32\x15.ChatsApp.common.User\x12\x0b\n\x03url\x18\x04 \x01(\t\x12&\n\x06groups\x18\x05 \x03(\x0b\x32\x16.ChatsApp.common.Group2\xc5\x01\n\x0e\x41\x63\x63ountService\x12Z\n\rCreateAccount\x12#.ChatsApp.auth.CreateAccountRequest\x1a$.ChatsApp.auth.CreateAccountResponse\x12W\n\x0cLoginAccount\x12\".ChatsApp.auth.LoginAccountRequest\x1a#.ChatsApp.auth.LoginAccountResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nauth.proto\x12\rChatsApp.auth\x1a\x0c\x63ommon.proto\"O\n\x14\x43reateAccountRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x13\n\x0b\x64isplayname\x18\x02 \x01(\t\x12\x10\n\x08password\x18\x03 \x01(\t\"9\n\x13LoginAccountRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\xcd\x01\n\x15\x43reateAccountResponse\x12/\n\x06status\x18\x01 \x01(\x0e\x32\x1f.ChatsApp.common.ResponseStatus\x12%\n\x06myself\x18\x02 \x01(\x0b\x32\x15.ChatsApp.common.User\x12\'\n\x08\x63ontacts\x18\x03 \x03(\x0b\x32\x15.ChatsApp.common.User\x12\x0b\n\x03url\x18\x04 \x01(\t\x12&\n\x06groups\x18\x05 \x03(\x0b\x32\x16.ChatsApp.common.Group\"\xcc\x01\n\x14LoginAccountResponse\x12/\n\x06status\x18\x01 \x01(\x0e\x32\x1f.ChatsApp.common.ResponseStatus\x12%\n\x06myself\x18\x02 \x01(\x0b\x32\x15.ChatsApp.common.User\x12\'\n\x08\x63ontacts\x18\x03 \x03(\x0b\x32\x15.ChatsApp.common.User\x12\x0b\n\x03url\x18\x04 \x01(\t\x12&\n\x06groups\x18\x05 \x03(\x0b\x32\x16.ChatsApp.common.Group2\xc5\x01\n\x0e\x41\x63\x63ountService\x12Z\n\rCreateAccount\x12#.ChatsApp.auth.CreateAccountRequest\x1a$.ChatsApp.auth.CreateAccountResponse\x12W\n\x0cLoginAccount\x12\".ChatsApp.auth.LoginAccountRequest\x1a#.ChatsApp.auth.LoginAccountResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,13 +33,13 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'auth_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_CREATEACCOUNTREQUEST']._serialized_start=43
-  _globals['_CREATEACCOUNTREQUEST']._serialized_end=124
-  _globals['_LOGINACCOUNTREQUEST']._serialized_start=126
-  _globals['_LOGINACCOUNTREQUEST']._serialized_end=184
-  _globals['_CREATEACCOUNTRESPONSE']._serialized_start=187
-  _globals['_CREATEACCOUNTRESPONSE']._serialized_end=392
-  _globals['_LOGINACCOUNTRESPONSE']._serialized_start=395
-  _globals['_LOGINACCOUNTRESPONSE']._serialized_end=599
-  _globals['_ACCOUNTSERVICE']._serialized_start=602
-  _globals['_ACCOUNTSERVICE']._serialized_end=799
+  _globals['_CREATEACCOUNTREQUEST']._serialized_end=122
+  _globals['_LOGINACCOUNTREQUEST']._serialized_start=124
+  _globals['_LOGINACCOUNTREQUEST']._serialized_end=181
+  _globals['_CREATEACCOUNTRESPONSE']._serialized_start=184
+  _globals['_CREATEACCOUNTRESPONSE']._serialized_end=389
+  _globals['_LOGINACCOUNTRESPONSE']._serialized_start=392
+  _globals['_LOGINACCOUNTRESPONSE']._serialized_end=596
+  _globals['_ACCOUNTSERVICE']._serialized_start=599
+  _globals['_ACCOUNTSERVICE']._serialized_end=796
 # @@protoc_insertion_point(module_scope)

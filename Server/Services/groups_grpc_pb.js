@@ -5,6 +5,28 @@ var grpc = require('@grpc/grpc-js');
 var groups_pb = require('./groups_pb.js');
 var common_pb = require('./common_pb.js');
 
+function serialize_ChatsApp_group_LoadMessageRequest(arg) {
+  if (!(arg instanceof groups_pb.LoadMessageRequest)) {
+    throw new Error('Expected argument of type ChatsApp.group.LoadMessageRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_ChatsApp_group_LoadMessageRequest(buffer_arg) {
+  return groups_pb.LoadMessageRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_ChatsApp_group_LoadMessageResponse(arg) {
+  if (!(arg instanceof groups_pb.LoadMessageResponse)) {
+    throw new Error('Expected argument of type ChatsApp.group.LoadMessageResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_ChatsApp_group_LoadMessageResponse(buffer_arg) {
+  return groups_pb.LoadMessageResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_ChatsApp_group_ReceiveMessageRequest(arg) {
   if (!(arg instanceof groups_pb.ReceiveMessageRequest)) {
     throw new Error('Expected argument of type ChatsApp.group.ReceiveMessageRequest');
@@ -50,9 +72,20 @@ function deserialize_ChatsApp_group_SendMessageResponse(buffer_arg) {
 }
 
 
-var UserChatServiceService = exports.UserChatServiceService = {
-  sendUserMessage: {
-    path: '/ChatsApp.group.UserChatService/SendUserMessage',
+var GroupChatServiceService = exports.GroupChatServiceService = {
+  loadMessages: {
+    path: '/ChatsApp.group.GroupChatService/LoadMessages',
+    requestStream: false,
+    responseStream: false,
+    requestType: groups_pb.LoadMessageRequest,
+    responseType: groups_pb.LoadMessageResponse,
+    requestSerialize: serialize_ChatsApp_group_LoadMessageRequest,
+    requestDeserialize: deserialize_ChatsApp_group_LoadMessageRequest,
+    responseSerialize: serialize_ChatsApp_group_LoadMessageResponse,
+    responseDeserialize: deserialize_ChatsApp_group_LoadMessageResponse,
+  },
+  sendMessage: {
+    path: '/ChatsApp.group.GroupChatService/SendMessage',
     requestStream: true,
     responseStream: true,
     requestType: groups_pb.SendMessageRequest,
@@ -62,8 +95,8 @@ var UserChatServiceService = exports.UserChatServiceService = {
     responseSerialize: serialize_ChatsApp_group_SendMessageResponse,
     responseDeserialize: deserialize_ChatsApp_group_SendMessageResponse,
   },
-  receiveUserMessage: {
-    path: '/ChatsApp.group.UserChatService/ReceiveUserMessage',
+  receiveMessages: {
+    path: '/ChatsApp.group.GroupChatService/ReceiveMessages',
     requestStream: true,
     responseStream: true,
     requestType: groups_pb.ReceiveMessageRequest,
@@ -75,4 +108,4 @@ var UserChatServiceService = exports.UserChatServiceService = {
   },
 };
 
-exports.UserChatServiceClient = grpc.makeGenericClientConstructor(UserChatServiceService, 'UserChatService');
+exports.GroupChatServiceClient = grpc.makeGenericClientConstructor(GroupChatServiceService, 'GroupChatService');

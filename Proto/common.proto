@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package ChatsApp.common;
 
+
 enum ResponseStatus {
     SUCCESS = 0;                
     FAILURE = 1;                
@@ -11,24 +12,30 @@ enum ResponseStatus {
     UNAUTHORIZED = 5;           
 }
 
+
 message User {
-    int32 user_id = 1;          
-    string user_name = 2;      
-    string display_name = 3;   
+    int32 id = 1;              
+    string username = 2;        
+    string displayname = 3;    
 }
+
 
 message Group {
-    int32 group_id = 1;
-    string group_name = 2;
+    int32 id = 1;               
+    string name = 2;            
 }
 
-enum MessageResponseStatus {
-    MESSAGESUCCESS = 0;                
-    MESSAGEFAILURE = 1;                        
+
+enum MessageStatus {
+    DELIVERED = 0;              
+    FAILED = 1;                 
+    PENDING = 2;                
+    READ = 3;                   
 }
+
 
 message MessageUser {
-    int32 user_id = 1;          
-    string user_name = 2;
-    string timestamp = 3;
+    int32 userid = 1;          
+    string username = 2;        
+    string sentat = 3;         
 }

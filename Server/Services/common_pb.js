@@ -22,7 +22,7 @@ var global = (function() {
 }.call(null));
 
 goog.exportSymbol('proto.ChatsApp.common.Group', null, global);
-goog.exportSymbol('proto.ChatsApp.common.MessageResponseStatus', null, global);
+goog.exportSymbol('proto.ChatsApp.common.MessageStatus', null, global);
 goog.exportSymbol('proto.ChatsApp.common.MessageUser', null, global);
 goog.exportSymbol('proto.ChatsApp.common.ResponseStatus', null, global);
 goog.exportSymbol('proto.ChatsApp.common.User', null, global);
@@ -121,9 +121,9 @@ proto.ChatsApp.common.User.prototype.toObject = function(opt_includeInstance) {
  */
 proto.ChatsApp.common.User.toObject = function(includeInstance, msg) {
   var f, obj = {
-    userId: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    userName: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    displayName: jspb.Message.getFieldWithDefault(msg, 3, "")
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    username: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    displayname: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -162,15 +162,15 @@ proto.ChatsApp.common.User.deserializeBinaryFromReader = function(msg, reader) {
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setUserId(value);
+      msg.setId(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setUserName(value);
+      msg.setUsername(value);
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
-      msg.setDisplayName(value);
+      msg.setDisplayname(value);
       break;
     default:
       reader.skipField();
@@ -201,21 +201,21 @@ proto.ChatsApp.common.User.prototype.serializeBinary = function() {
  */
 proto.ChatsApp.common.User.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getUserId();
+  f = message.getId();
   if (f !== 0) {
     writer.writeInt32(
       1,
       f
     );
   }
-  f = message.getUserName();
+  f = message.getUsername();
   if (f.length > 0) {
     writer.writeString(
       2,
       f
     );
   }
-  f = message.getDisplayName();
+  f = message.getDisplayname();
   if (f.length > 0) {
     writer.writeString(
       3,
@@ -226,10 +226,10 @@ proto.ChatsApp.common.User.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional int32 user_id = 1;
+ * optional int32 id = 1;
  * @return {number}
  */
-proto.ChatsApp.common.User.prototype.getUserId = function() {
+proto.ChatsApp.common.User.prototype.getId = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -238,16 +238,16 @@ proto.ChatsApp.common.User.prototype.getUserId = function() {
  * @param {number} value
  * @return {!proto.ChatsApp.common.User} returns this
  */
-proto.ChatsApp.common.User.prototype.setUserId = function(value) {
+proto.ChatsApp.common.User.prototype.setId = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
 /**
- * optional string user_name = 2;
+ * optional string username = 2;
  * @return {string}
  */
-proto.ChatsApp.common.User.prototype.getUserName = function() {
+proto.ChatsApp.common.User.prototype.getUsername = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -256,16 +256,16 @@ proto.ChatsApp.common.User.prototype.getUserName = function() {
  * @param {string} value
  * @return {!proto.ChatsApp.common.User} returns this
  */
-proto.ChatsApp.common.User.prototype.setUserName = function(value) {
+proto.ChatsApp.common.User.prototype.setUsername = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional string display_name = 3;
+ * optional string displayname = 3;
  * @return {string}
  */
-proto.ChatsApp.common.User.prototype.getDisplayName = function() {
+proto.ChatsApp.common.User.prototype.getDisplayname = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
@@ -274,7 +274,7 @@ proto.ChatsApp.common.User.prototype.getDisplayName = function() {
  * @param {string} value
  * @return {!proto.ChatsApp.common.User} returns this
  */
-proto.ChatsApp.common.User.prototype.setDisplayName = function(value) {
+proto.ChatsApp.common.User.prototype.setDisplayname = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
 };
 
@@ -311,8 +311,8 @@ proto.ChatsApp.common.Group.prototype.toObject = function(opt_includeInstance) {
  */
 proto.ChatsApp.common.Group.toObject = function(includeInstance, msg) {
   var f, obj = {
-    groupId: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    groupName: jspb.Message.getFieldWithDefault(msg, 2, "")
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    name: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -351,11 +351,11 @@ proto.ChatsApp.common.Group.deserializeBinaryFromReader = function(msg, reader) 
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setGroupId(value);
+      msg.setId(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setGroupName(value);
+      msg.setName(value);
       break;
     default:
       reader.skipField();
@@ -386,14 +386,14 @@ proto.ChatsApp.common.Group.prototype.serializeBinary = function() {
  */
 proto.ChatsApp.common.Group.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getGroupId();
+  f = message.getId();
   if (f !== 0) {
     writer.writeInt32(
       1,
       f
     );
   }
-  f = message.getGroupName();
+  f = message.getName();
   if (f.length > 0) {
     writer.writeString(
       2,
@@ -404,10 +404,10 @@ proto.ChatsApp.common.Group.serializeBinaryToWriter = function(message, writer) 
 
 
 /**
- * optional int32 group_id = 1;
+ * optional int32 id = 1;
  * @return {number}
  */
-proto.ChatsApp.common.Group.prototype.getGroupId = function() {
+proto.ChatsApp.common.Group.prototype.getId = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -416,16 +416,16 @@ proto.ChatsApp.common.Group.prototype.getGroupId = function() {
  * @param {number} value
  * @return {!proto.ChatsApp.common.Group} returns this
  */
-proto.ChatsApp.common.Group.prototype.setGroupId = function(value) {
+proto.ChatsApp.common.Group.prototype.setId = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
 /**
- * optional string group_name = 2;
+ * optional string name = 2;
  * @return {string}
  */
-proto.ChatsApp.common.Group.prototype.getGroupName = function() {
+proto.ChatsApp.common.Group.prototype.getName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -434,7 +434,7 @@ proto.ChatsApp.common.Group.prototype.getGroupName = function() {
  * @param {string} value
  * @return {!proto.ChatsApp.common.Group} returns this
  */
-proto.ChatsApp.common.Group.prototype.setGroupName = function(value) {
+proto.ChatsApp.common.Group.prototype.setName = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
 };
 
@@ -471,9 +471,9 @@ proto.ChatsApp.common.MessageUser.prototype.toObject = function(opt_includeInsta
  */
 proto.ChatsApp.common.MessageUser.toObject = function(includeInstance, msg) {
   var f, obj = {
-    userId: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    userName: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    timestamp: jspb.Message.getFieldWithDefault(msg, 3, "")
+    userid: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    username: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    sentat: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -512,15 +512,15 @@ proto.ChatsApp.common.MessageUser.deserializeBinaryFromReader = function(msg, re
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setUserId(value);
+      msg.setUserid(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setUserName(value);
+      msg.setUsername(value);
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
-      msg.setTimestamp(value);
+      msg.setSentat(value);
       break;
     default:
       reader.skipField();
@@ -551,21 +551,21 @@ proto.ChatsApp.common.MessageUser.prototype.serializeBinary = function() {
  */
 proto.ChatsApp.common.MessageUser.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getUserId();
+  f = message.getUserid();
   if (f !== 0) {
     writer.writeInt32(
       1,
       f
     );
   }
-  f = message.getUserName();
+  f = message.getUsername();
   if (f.length > 0) {
     writer.writeString(
       2,
       f
     );
   }
-  f = message.getTimestamp();
+  f = message.getSentat();
   if (f.length > 0) {
     writer.writeString(
       3,
@@ -576,10 +576,10 @@ proto.ChatsApp.common.MessageUser.serializeBinaryToWriter = function(message, wr
 
 
 /**
- * optional int32 user_id = 1;
+ * optional int32 userid = 1;
  * @return {number}
  */
-proto.ChatsApp.common.MessageUser.prototype.getUserId = function() {
+proto.ChatsApp.common.MessageUser.prototype.getUserid = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -588,16 +588,16 @@ proto.ChatsApp.common.MessageUser.prototype.getUserId = function() {
  * @param {number} value
  * @return {!proto.ChatsApp.common.MessageUser} returns this
  */
-proto.ChatsApp.common.MessageUser.prototype.setUserId = function(value) {
+proto.ChatsApp.common.MessageUser.prototype.setUserid = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
 /**
- * optional string user_name = 2;
+ * optional string username = 2;
  * @return {string}
  */
-proto.ChatsApp.common.MessageUser.prototype.getUserName = function() {
+proto.ChatsApp.common.MessageUser.prototype.getUsername = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -606,16 +606,16 @@ proto.ChatsApp.common.MessageUser.prototype.getUserName = function() {
  * @param {string} value
  * @return {!proto.ChatsApp.common.MessageUser} returns this
  */
-proto.ChatsApp.common.MessageUser.prototype.setUserName = function(value) {
+proto.ChatsApp.common.MessageUser.prototype.setUsername = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional string timestamp = 3;
+ * optional string sentat = 3;
  * @return {string}
  */
-proto.ChatsApp.common.MessageUser.prototype.getTimestamp = function() {
+proto.ChatsApp.common.MessageUser.prototype.getSentat = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
@@ -624,7 +624,7 @@ proto.ChatsApp.common.MessageUser.prototype.getTimestamp = function() {
  * @param {string} value
  * @return {!proto.ChatsApp.common.MessageUser} returns this
  */
-proto.ChatsApp.common.MessageUser.prototype.setTimestamp = function(value) {
+proto.ChatsApp.common.MessageUser.prototype.setSentat = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
 };
 
@@ -644,9 +644,11 @@ proto.ChatsApp.common.ResponseStatus = {
 /**
  * @enum {number}
  */
-proto.ChatsApp.common.MessageResponseStatus = {
-  MESSAGESUCCESS: 0,
-  MESSAGEFAILURE: 1
+proto.ChatsApp.common.MessageStatus = {
+  DELIVERED: 0,
+  FAILED: 1,
+  PENDING: 2,
+  READ: 3
 };
 
 goog.object.extend(exports, proto.ChatsApp.common);

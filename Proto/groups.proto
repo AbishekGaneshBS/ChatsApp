@@ -4,40 +4,52 @@ package ChatsApp.group;
 
 import "common.proto";
 
+
 message LoadMessageRequest {
-    ChatsApp.common.MessageUser fromuser = 1;
-    int32 groupid = 2;
+    ChatsApp.common.MessageUser requester = 1;  
+    int32 groupid = 2;                        
 }
 
 message LoadMessageResponse {
-    repeated ChatsApp.common.MessageUser sender = 1;
-    repeated ChatsApp.common.MessageUser receiver = 2;
-    repeated string message = 3;
-    repeated string timestamp = 4;
+    repeated ChatsApp.common.MessageUser senders = 1;    
+    repeated string messages = 2;                        
+    repeated string timestamps = 3;                      
 }
 
+
+message SendMessageRequest {
+    ChatsApp.common.MessageUser sender = 1;
+    int32 groupid = 2;
+    string content = 3;                                 
+    optional string client_id = 4;                     
+}
+
+
+message SendMessageResponse {
+    ChatsApp.common.MessageStatus status = 1;
+    string groupid = 2;                               
+    string timestamp = 3;                               
+}
 message ReceiveMessageRequest {
-    ChatsApp.common.MessageUser fromuser = 1;
+    int32 groupid = 1;
+    optional string lastreceivedid = 2;               
 }
 
 message ReceiveMessageResponse {
-    ChatsApp.common.MessageUser fromuser = 1;
-    string textmessage = 2;
-    int32 groupid = 3;
+    ChatsApp.common.MessageUser sender = 1;
+    int32 groupid = 2;
+    string messageid = 3;                              
+    string content = 4;
+    string timestamp = 5;
 }
 
-message SendMessageRequest {
-    ChatsApp.common.MessageUser fromuser = 1;
-    int32 groupid = 2; 
-    string textmessage = 3; 
-}
-
-message SendMessageResponse{
-    ChatsApp.common.MessageResponseStatus response = 1;
-}
-
-
-service UserChatService {
-    rpc SendUserMessage(stream SendMessageRequest) returns (stream SendMessageResponse);
-    rpc ReceiveUserMessage(stream ReceiveMessageRequest) returns (stream ReceiveMessageResponse);
+service GroupChatService {
+    
+    rpc LoadMessages(LoadMessageRequest) returns (LoadMessageResponse);
+    
+   
+    rpc SendMessage(stream SendMessageRequest) returns (stream SendMessageResponse);
+    
+    
+    rpc ReceiveMessages(stream ReceiveMessageRequest) returns (stream ReceiveMessageResponse);
 }

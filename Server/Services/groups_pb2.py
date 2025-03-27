@@ -25,7 +25,7 @@ _sym_db = _symbol_database.Default()
 import common_pb2 as common__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cgroups.proto\x12\x0e\x43hatsApp.group\x1a\x0c\x63ommon.proto\"U\n\x12LoadMessageRequest\x12.\n\x08\x66romuser\x18\x01 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12\x0f\n\x07groupid\x18\x02 \x01(\x05\"\x97\x01\n\x13LoadMessageResponse\x12,\n\x06sender\x18\x01 \x03(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12.\n\x08receiver\x18\x02 \x03(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12\x0f\n\x07message\x18\x03 \x03(\t\x12\x11\n\ttimestamp\x18\x04 \x03(\t\"G\n\x15ReceiveMessageRequest\x12.\n\x08\x66romuser\x18\x01 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\"n\n\x16ReceiveMessageResponse\x12.\n\x08\x66romuser\x18\x01 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12\x13\n\x0btextmessage\x18\x02 \x01(\t\x12\x0f\n\x07groupid\x18\x03 \x01(\x05\"j\n\x12SendMessageRequest\x12.\n\x08\x66romuser\x18\x01 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12\x0f\n\x07groupid\x18\x02 \x01(\x05\x12\x13\n\x0btextmessage\x18\x03 \x01(\t\"O\n\x13SendMessageResponse\x12\x38\n\x08response\x18\x01 \x01(\x0e\x32&.ChatsApp.common.MessageResponseStatus2\xda\x01\n\x0fUserChatService\x12^\n\x0fSendUserMessage\x12\".ChatsApp.group.SendMessageRequest\x1a#.ChatsApp.group.SendMessageResponse(\x01\x30\x01\x12g\n\x12ReceiveUserMessage\x12%.ChatsApp.group.ReceiveMessageRequest\x1a&.ChatsApp.group.ReceiveMessageResponse(\x01\x30\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cgroups.proto\x12\x0e\x43hatsApp.group\x1a\x0c\x63ommon.proto\"V\n\x12LoadMessageRequest\x12/\n\trequester\x18\x01 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12\x0f\n\x07groupid\x18\x02 \x01(\x05\"j\n\x13LoadMessageResponse\x12-\n\x07senders\x18\x01 \x03(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12\x10\n\x08messages\x18\x02 \x03(\t\x12\x12\n\ntimestamps\x18\x03 \x03(\t\"\x8a\x01\n\x12SendMessageRequest\x12,\n\x06sender\x18\x01 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12\x0f\n\x07groupid\x18\x02 \x01(\x05\x12\x0f\n\x07\x63ontent\x18\x03 \x01(\t\x12\x16\n\tclient_id\x18\x04 \x01(\tH\x00\x88\x01\x01\x42\x0c\n\n_client_id\"i\n\x13SendMessageResponse\x12.\n\x06status\x18\x01 \x01(\x0e\x32\x1e.ChatsApp.common.MessageStatus\x12\x0f\n\x07groupid\x18\x02 \x01(\t\x12\x11\n\ttimestamp\x18\x03 \x01(\t\"X\n\x15ReceiveMessageRequest\x12\x0f\n\x07groupid\x18\x01 \x01(\x05\x12\x1b\n\x0elastreceivedid\x18\x02 \x01(\tH\x00\x88\x01\x01\x42\x11\n\x0f_lastreceivedid\"\x90\x01\n\x16ReceiveMessageResponse\x12,\n\x06sender\x18\x01 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12\x10\n\x08group_id\x18\x02 \x01(\x05\x12\x12\n\nmessage_id\x18\x03 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x04 \x01(\t\x12\x11\n\ttimestamp\x18\x05 \x01(\t2\xad\x02\n\x10GroupChatService\x12W\n\x0cLoadMessages\x12\".ChatsApp.group.LoadMessageRequest\x1a#.ChatsApp.group.LoadMessageResponse\x12Z\n\x0bSendMessage\x12\".ChatsApp.group.SendMessageRequest\x1a#.ChatsApp.group.SendMessageResponse(\x01\x30\x01\x12\x64\n\x0fReceiveMessages\x12%.ChatsApp.group.ReceiveMessageRequest\x1a&.ChatsApp.group.ReceiveMessageResponse(\x01\x30\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,17 +33,17 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'groups_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_LOADMESSAGEREQUEST']._serialized_start=46
-  _globals['_LOADMESSAGEREQUEST']._serialized_end=131
+  _globals['_LOADMESSAGEREQUEST']._serialized_end=132
   _globals['_LOADMESSAGERESPONSE']._serialized_start=134
-  _globals['_LOADMESSAGERESPONSE']._serialized_end=285
-  _globals['_RECEIVEMESSAGEREQUEST']._serialized_start=287
-  _globals['_RECEIVEMESSAGEREQUEST']._serialized_end=358
-  _globals['_RECEIVEMESSAGERESPONSE']._serialized_start=360
-  _globals['_RECEIVEMESSAGERESPONSE']._serialized_end=470
-  _globals['_SENDMESSAGEREQUEST']._serialized_start=472
-  _globals['_SENDMESSAGEREQUEST']._serialized_end=578
-  _globals['_SENDMESSAGERESPONSE']._serialized_start=580
-  _globals['_SENDMESSAGERESPONSE']._serialized_end=659
-  _globals['_USERCHATSERVICE']._serialized_start=662
-  _globals['_USERCHATSERVICE']._serialized_end=880
+  _globals['_LOADMESSAGERESPONSE']._serialized_end=240
+  _globals['_SENDMESSAGEREQUEST']._serialized_start=243
+  _globals['_SENDMESSAGEREQUEST']._serialized_end=381
+  _globals['_SENDMESSAGERESPONSE']._serialized_start=383
+  _globals['_SENDMESSAGERESPONSE']._serialized_end=488
+  _globals['_RECEIVEMESSAGEREQUEST']._serialized_start=490
+  _globals['_RECEIVEMESSAGEREQUEST']._serialized_end=578
+  _globals['_RECEIVEMESSAGERESPONSE']._serialized_start=581
+  _globals['_RECEIVEMESSAGERESPONSE']._serialized_end=725
+  _globals['_GROUPCHATSERVICE']._serialized_start=728
+  _globals['_GROUPCHATSERVICE']._serialized_end=1029
 # @@protoc_insertion_point(module_scope)

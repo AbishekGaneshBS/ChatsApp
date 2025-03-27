@@ -25,7 +25,7 @@ _sym_db = _symbol_database.Default()
 import common_pb2 as common__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nuser.proto\x12\rChatsApp.user\x1a\x0c\x63ommon.proto\"r\n\x12LoadMessageRequest\x12.\n\x08\x66romuser\x18\x01 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12,\n\x06touser\x18\x02 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\"\x97\x01\n\x13LoadMessageResponse\x12,\n\x06sender\x18\x01 \x03(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12.\n\x08receiver\x18\x02 \x03(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12\x0f\n\x07message\x18\x03 \x03(\t\x12\x11\n\ttimestamp\x18\x04 \x03(\t\"G\n\x15ReceiveMessageRequest\x12.\n\x08\x66romuser\x18\x01 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\"]\n\x16ReceiveMessageResponse\x12.\n\x08\x66romuser\x18\x01 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12\x13\n\x0btextmessage\x18\x02 \x01(\t\"\x87\x01\n\x12SendMessageRequest\x12.\n\x08\x66romuser\x18\x01 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12,\n\x06touser\x18\x02 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12\x13\n\x0btextmessage\x18\x03 \x01(\t\"O\n\x13SendMessageResponse\x12\x38\n\x08response\x18\x01 \x01(\x0e\x32&.ChatsApp.common.MessageResponseStatus2\xb6\x02\n\x0fUserChatService\x12Z\n\x0fLoadUserMessage\x12!.ChatsApp.user.LoadMessageRequest\x1a\".ChatsApp.user.LoadMessageResponse\"\x00\x12^\n\x0fSendUserMessage\x12!.ChatsApp.user.SendMessageRequest\x1a\".ChatsApp.user.SendMessageResponse\"\x00(\x01\x30\x01\x12g\n\x12ReceiveUserMessage\x12$.ChatsApp.user.ReceiveMessageRequest\x1a%.ChatsApp.user.ReceiveMessageResponse\"\x00(\x01\x30\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nuser.proto\x12\rChatsApp.user\x1a\x0c\x63ommon.proto\"r\n\x12LoadMessageRequest\x12.\n\x08\x66romuser\x18\x01 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12,\n\x06touser\x18\x02 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\"\x9b\x01\n\x13LoadMessageResponse\x12-\n\x07senders\x18\x01 \x03(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12/\n\treceivers\x18\x02 \x03(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12\x10\n\x08messages\x18\x03 \x03(\t\x12\x12\n\ntimestamps\x18\x04 \x03(\t\"H\n\x15ReceiveMessageRequest\x12/\n\tfrom_user\x18\x01 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\"W\n\x16ReceiveMessageResponse\x12,\n\x06sender\x18\x01 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x84\x01\n\x12SendMessageRequest\x12,\n\x06sender\x18\x01 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12/\n\trecipient\x18\x02 \x01(\x0b\x32\x1c.ChatsApp.common.MessageUser\x12\x0f\n\x07\x63ontent\x18\x03 \x01(\t\"E\n\x13SendMessageResponse\x12.\n\x06status\x18\x01 \x01(\x0e\x32\x1e.ChatsApp.common.MessageStatus2\xa7\x02\n\x0fUserChatService\x12U\n\x0cLoadMessages\x12!.ChatsApp.user.LoadMessageRequest\x1a\".ChatsApp.user.LoadMessageResponse\x12Y\n\x0cSendMessages\x12!.ChatsApp.user.SendMessageRequest\x1a\".ChatsApp.user.SendMessageResponse(\x01\x30\x01\x12\x62\n\x0fReceiveMessages\x12$.ChatsApp.user.ReceiveMessageRequest\x1a%.ChatsApp.user.ReceiveMessageResponse(\x01\x30\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -35,15 +35,15 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_LOADMESSAGEREQUEST']._serialized_start=43
   _globals['_LOADMESSAGEREQUEST']._serialized_end=157
   _globals['_LOADMESSAGERESPONSE']._serialized_start=160
-  _globals['_LOADMESSAGERESPONSE']._serialized_end=311
-  _globals['_RECEIVEMESSAGEREQUEST']._serialized_start=313
-  _globals['_RECEIVEMESSAGEREQUEST']._serialized_end=384
-  _globals['_RECEIVEMESSAGERESPONSE']._serialized_start=386
-  _globals['_RECEIVEMESSAGERESPONSE']._serialized_end=479
-  _globals['_SENDMESSAGEREQUEST']._serialized_start=482
-  _globals['_SENDMESSAGEREQUEST']._serialized_end=617
-  _globals['_SENDMESSAGERESPONSE']._serialized_start=619
-  _globals['_SENDMESSAGERESPONSE']._serialized_end=698
-  _globals['_USERCHATSERVICE']._serialized_start=701
-  _globals['_USERCHATSERVICE']._serialized_end=1011
+  _globals['_LOADMESSAGERESPONSE']._serialized_end=315
+  _globals['_RECEIVEMESSAGEREQUEST']._serialized_start=317
+  _globals['_RECEIVEMESSAGEREQUEST']._serialized_end=389
+  _globals['_RECEIVEMESSAGERESPONSE']._serialized_start=391
+  _globals['_RECEIVEMESSAGERESPONSE']._serialized_end=478
+  _globals['_SENDMESSAGEREQUEST']._serialized_start=481
+  _globals['_SENDMESSAGEREQUEST']._serialized_end=613
+  _globals['_SENDMESSAGERESPONSE']._serialized_start=615
+  _globals['_SENDMESSAGERESPONSE']._serialized_end=684
+  _globals['_USERCHATSERVICE']._serialized_start=687
+  _globals['_USERCHATSERVICE']._serialized_end=982
 # @@protoc_insertion_point(module_scope)

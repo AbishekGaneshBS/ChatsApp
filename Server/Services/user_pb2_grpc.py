@@ -34,18 +34,18 @@ class UserChatServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.LoadUserMessage = channel.unary_unary(
-                '/ChatsApp.user.UserChatService/LoadUserMessage',
+        self.LoadMessages = channel.unary_unary(
+                '/ChatsApp.user.UserChatService/LoadMessages',
                 request_serializer=user__pb2.LoadMessageRequest.SerializeToString,
                 response_deserializer=user__pb2.LoadMessageResponse.FromString,
                 _registered_method=True)
-        self.SendUserMessage = channel.stream_stream(
-                '/ChatsApp.user.UserChatService/SendUserMessage',
+        self.SendMessages = channel.stream_stream(
+                '/ChatsApp.user.UserChatService/SendMessages',
                 request_serializer=user__pb2.SendMessageRequest.SerializeToString,
                 response_deserializer=user__pb2.SendMessageResponse.FromString,
                 _registered_method=True)
-        self.ReceiveUserMessage = channel.stream_stream(
-                '/ChatsApp.user.UserChatService/ReceiveUserMessage',
+        self.ReceiveMessages = channel.stream_stream(
+                '/ChatsApp.user.UserChatService/ReceiveMessages',
                 request_serializer=user__pb2.ReceiveMessageRequest.SerializeToString,
                 response_deserializer=user__pb2.ReceiveMessageResponse.FromString,
                 _registered_method=True)
@@ -54,19 +54,19 @@ class UserChatServiceStub(object):
 class UserChatServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def LoadUserMessage(self, request, context):
+    def LoadMessages(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def SendUserMessage(self, request_iterator, context):
+    def SendMessages(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ReceiveUserMessage(self, request_iterator, context):
+    def ReceiveMessages(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -75,18 +75,18 @@ class UserChatServiceServicer(object):
 
 def add_UserChatServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'LoadUserMessage': grpc.unary_unary_rpc_method_handler(
-                    servicer.LoadUserMessage,
+            'LoadMessages': grpc.unary_unary_rpc_method_handler(
+                    servicer.LoadMessages,
                     request_deserializer=user__pb2.LoadMessageRequest.FromString,
                     response_serializer=user__pb2.LoadMessageResponse.SerializeToString,
             ),
-            'SendUserMessage': grpc.stream_stream_rpc_method_handler(
-                    servicer.SendUserMessage,
+            'SendMessages': grpc.stream_stream_rpc_method_handler(
+                    servicer.SendMessages,
                     request_deserializer=user__pb2.SendMessageRequest.FromString,
                     response_serializer=user__pb2.SendMessageResponse.SerializeToString,
             ),
-            'ReceiveUserMessage': grpc.stream_stream_rpc_method_handler(
-                    servicer.ReceiveUserMessage,
+            'ReceiveMessages': grpc.stream_stream_rpc_method_handler(
+                    servicer.ReceiveMessages,
                     request_deserializer=user__pb2.ReceiveMessageRequest.FromString,
                     response_serializer=user__pb2.ReceiveMessageResponse.SerializeToString,
             ),
@@ -102,7 +102,7 @@ class UserChatService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def LoadUserMessage(request,
+    def LoadMessages(request,
             target,
             options=(),
             channel_credentials=None,
@@ -115,7 +115,7 @@ class UserChatService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/ChatsApp.user.UserChatService/LoadUserMessage',
+            '/ChatsApp.user.UserChatService/LoadMessages',
             user__pb2.LoadMessageRequest.SerializeToString,
             user__pb2.LoadMessageResponse.FromString,
             options,
@@ -129,7 +129,7 @@ class UserChatService(object):
             _registered_method=True)
 
     @staticmethod
-    def SendUserMessage(request_iterator,
+    def SendMessages(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -142,7 +142,7 @@ class UserChatService(object):
         return grpc.experimental.stream_stream(
             request_iterator,
             target,
-            '/ChatsApp.user.UserChatService/SendUserMessage',
+            '/ChatsApp.user.UserChatService/SendMessages',
             user__pb2.SendMessageRequest.SerializeToString,
             user__pb2.SendMessageResponse.FromString,
             options,
@@ -156,7 +156,7 @@ class UserChatService(object):
             _registered_method=True)
 
     @staticmethod
-    def ReceiveUserMessage(request_iterator,
+    def ReceiveMessages(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -169,7 +169,7 @@ class UserChatService(object):
         return grpc.experimental.stream_stream(
             request_iterator,
             target,
-            '/ChatsApp.user.UserChatService/ReceiveUserMessage',
+            '/ChatsApp.user.UserChatService/ReceiveMessages',
             user__pb2.ReceiveMessageRequest.SerializeToString,
             user__pb2.ReceiveMessageResponse.FromString,
             options,

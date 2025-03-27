@@ -4,40 +4,43 @@ package ChatsApp.user;
 
 import "common.proto";
 
+
 message LoadMessageRequest {
-    ChatsApp.common.MessageUser fromuser = 1;
+    ChatsApp.common.MessageUser fromuser = 1;  
     ChatsApp.common.MessageUser touser = 2;
 }
 
 message LoadMessageResponse {
-    repeated ChatsApp.common.MessageUser sender = 1;
-    repeated ChatsApp.common.MessageUser receiver = 2;
-    repeated string message = 3;
-    repeated string timestamp = 4;
+    repeated ChatsApp.common.MessageUser senders = 1;      
+    repeated ChatsApp.common.MessageUser receivers = 2;    
+    repeated string messages = 3;                         
+    repeated string timestamps = 4;                       
 }
 
 message ReceiveMessageRequest {
-    ChatsApp.common.MessageUser fromuser = 1; 
+    ChatsApp.common.MessageUser from_user = 1; 
 }
 
 message ReceiveMessageResponse {
-    ChatsApp.common.MessageUser fromuser = 1;
-    string textmessage = 2;
+    ChatsApp.common.MessageUser sender = 1;    
+    string message = 2;                       
 }
 
 message SendMessageRequest {
-    ChatsApp.common.MessageUser fromuser = 1;
-    ChatsApp.common.MessageUser touser = 2;    
-    string textmessage = 3; 
+    ChatsApp.common.MessageUser sender = 1;    
+    ChatsApp.common.MessageUser recipient = 2; 
+    string content = 3;                        
 }
 
-message SendMessageResponse{
-    ChatsApp.common.MessageResponseStatus response = 1;
+message SendMessageResponse {
+    ChatsApp.common.MessageStatus status = 1;  
 }
-
 
 service UserChatService {
-    rpc LoadUserMessage(LoadMessageRequest) returns (LoadMessageResponse) {};
-    rpc SendUserMessage(stream SendMessageRequest) returns (stream SendMessageResponse) {};
-    rpc ReceiveUserMessage(stream ReceiveMessageRequest) returns (stream ReceiveMessageResponse) {};
+   
+    rpc LoadMessages(LoadMessageRequest) returns (LoadMessageResponse);
+    
+    rpc SendMessages(stream SendMessageRequest) returns (stream SendMessageResponse);
+    
+    rpc ReceiveMessages(stream ReceiveMessageRequest) returns (stream ReceiveMessageResponse);
 }
