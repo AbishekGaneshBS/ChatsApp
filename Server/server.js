@@ -12,7 +12,6 @@ const common_pb = require('./Services/common_pb');
 const app = express();
 const PORT = 3000;
 
-// Middleware setup
 app.use(cookieParser());
 app.use(session({
   secret: 'your-secret-key',
@@ -20,7 +19,7 @@ app.use(session({
   saveUninitialized: true,
   cookie: { 
     secure: false,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    maxAge: 24 * 60 * 60 * 1000 
   } 
 }));
 
@@ -29,7 +28,7 @@ const client = new auth_pb_grpc.AccountServiceClient(
   grpc.credentials.createInsecure()
 );
 
-// View engine setup
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../Client/Views'));
 
@@ -37,10 +36,9 @@ app.use(express.static(path.join(__dirname, '../Client')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Middleware to check auth cookie
+
 const checkAuth = (req, res, next) => {
   if (req.cookies.authToken) {
-    // Verify token with gRPC service if needed
     req.isAuthenticated = true;
   }
   next();
@@ -48,7 +46,7 @@ const checkAuth = (req, res, next) => {
 
 app.use(checkAuth);
 
-// Helper function
+
 function transformUserData(response) {
   return {
     url: response.getUrl(),
@@ -65,7 +63,7 @@ function transformUserData(response) {
   };
 }
 
-// Routes
+
 app.get('/', (req, res) => {
   if (req.isAuthenticated) {
     return res.redirect('/main');
@@ -89,6 +87,8 @@ app.get('/main', (req, res) => {
   }
   res.render('main', { 
     user: req.session.user,
+    contacts: req.session.contacts,
+    url: req.session.url 
   });
 });
 
