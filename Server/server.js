@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const grpc = require('@grpc/grpc-js');
 const ejs = require('ejs');
+const session = require('express-session');
 
 const auth_pb = require('./auth_pb');
 const auth_pb_grpc = require('./auth_grpc_pb');
@@ -9,6 +10,14 @@ const common_pb = require('./common_pb');
 
 const app = express();
 const PORT = 3000;
+
+
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } 
+}));
 
 const client = new auth_pb_grpc.AccountServiceClient(
   'localhost:8000',
@@ -22,14 +31,37 @@ app.use(express.static(path.join(__dirname, '../Client')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+function transformUserData(response) {
+  return {
+    url: response.getUrl(),
+    myself: {
+      userId: response.getMyself().getUserId(),
+      userName: response.getMyself().getUserName(),
+      displayName: response.getMyself().getDisplayName()
+    },
+    contacts: response.getContactsList().map(contact => ({
+      userId: contact.getUserId(),
+      userName: contact.getUserName(),
+      displayName: contact.getDisplayName()
+    }))
+  };
+}
+
+
 app.get('/', (req, res) => {
-  res.render('index', { 
-    message: null, 
-    url: null,
-    myself: null,
-    contacts: null
-  }); 
+  const flash = req.session.flash;
+  delete req.session.flash; 
+  
+  res.render('index', {
+    message: flash?.message || null,
+    url: flash?.url || null,
+    myself: flash?.myself || null,
+    contacts: flash?.contacts || null,
+    formToShow: flash?.formToShow || 'login' 
+  });
 });
+
 
 app.post('/register', (req, res) => {
   const { username, displayName, password } = req.body;
@@ -42,51 +74,35 @@ app.post('/register', (req, res) => {
   client.createAccount(request, (err, response) => {
     if (err) {
       console.error('Error creating account:', err);
-      return res.render('index', { 
-        message: 'Error creating account. Please try again.', 
-        url: null,
-        myself: null,
-        contacts: null
-      });
+      req.session.flash = {
+        message: 'Error creating account. Please try again.',
+        formToShow: 'register'
+      };
+      return res.redirect('/');
     }
 
     const status = response.getStatus();
     if (status === common_pb.ResponseStatus.SUCCESS) {
-      const url = response.getUrl();
-      const myself = response.getMyself();
-      const contacts = response.getContactsList();
-      
-      res.render('index', { 
-        message: 'Registration successful!', 
-        url,
-        myself: myself ? {
-          userId: myself.getUserId(),
-          userName: myself.getUserName(),
-          displayName: myself.getDisplayName()
-        } : null,
-        contacts: contacts.map(contact => ({
-          userId: contact.getUserId(),
-          userName: contact.getUserName(),
-          displayName: contact.getDisplayName()
-        }))
-      });
+      req.session.flash = {
+        message: 'Registration successful!',
+        ...transformUserData(response),
+        formToShow: 'login'
+      };
     } else if (status === common_pb.ResponseStatus.ACCOUNT_EXISTS) {
-      res.render('index', { 
-        message: 'Username is already taken.', 
-        url: null,
-        myself: null,
-        contacts: null
-      });
+      req.session.flash = {
+        message: 'Username is already taken.',
+        formToShow: 'register'
+      };
     } else {
-      res.render('index', { 
-        message: 'Registration failed. Please try again.', 
-        url: null,
-        myself: null,
-        contacts: null
-      });
+      req.session.flash = {
+        message: 'Registration failed. Please try again.',
+        formToShow: 'register'
+      };
     }
+    res.redirect('/');
   });
 });
+
 
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
@@ -98,56 +114,38 @@ app.post('/login', (req, res) => {
   client.loginAccount(request, (err, response) => {
     if (err) {
       console.error('Error logging in:', err);
-      return res.render('index', { 
-        message: 'Error logging in. Please try again.', 
-        url: null,
-        myself: null,
-        contacts: null
-      });
+      req.session.flash = {
+        message: 'Error logging in. Please try again.',
+        formToShow: 'login'
+      };
+      return res.redirect('/');
     }
 
     const status = response.getStatus();
     if (status === common_pb.ResponseStatus.SUCCESS) {
-      const url = response.getUrl();
-      const myself = response.getMyself();
-      const contacts = response.getContactsList();
-      
-      res.render('index', { 
-        message: 'Login successful!', 
-        url,
-        myself: myself ? {
-          userId: myself.getUserId(),
-          userName: myself.getUserName(),
-          displayName: myself.getDisplayName()
-        } : null,
-        contacts: contacts.map(contact => ({
-          userId: contact.getUserId(),
-          userName: contact.getUserName(),
-          displayName: contact.getDisplayName()
-        }))
-      });
+      req.session.flash = {
+        message: 'Login successful!',
+        ...transformUserData(response)
+      };
+
+      return res.redirect(response.getUrl());
     } else if (status === common_pb.ResponseStatus.ACCOUNT_NOT_FOUND) {
-      res.render('index', { 
-        message: 'Account not found.', 
-        url: null,
-        myself: null,
-        contacts: null
-      });
+      req.session.flash = {
+        message: 'Account not found.',
+        formToShow: 'login'
+      };
     } else if (status === common_pb.ResponseStatus.UNAUTHORIZED) {
-      res.render('index', { 
-        message: 'Wrong username or password.', 
-        url: null,
-        myself: null,
-        contacts: null
-      });
+      req.session.flash = {
+        message: 'Wrong username or password.',
+        formToShow: 'login'
+      };
     } else {
-      res.render('index', { 
-        message: 'Login failed. Please try again.', 
-        url: null,
-        myself: null,
-        contacts: null
-      });
+      req.session.flash = {
+        message: 'Login failed. Please try again.',
+        formToShow: 'login'
+      };
     }
+    res.redirect('/');
   });
 });
 
