@@ -5,7 +5,6 @@ const ejs = require('ejs');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 
-
 const auth_pb = require('./Services/auth_pb');
 const auth_pb_grpc = require('./Services/auth_grpc_pb');
 const common_pb = require('./Services/common_pb');
@@ -17,7 +16,6 @@ const group_pb_grpc = require('./Services/groups_grpc_pb');
 const app = express();
 const PORT = 3000;
 
-
 app.use(cookieParser());
 app.use(session({
   secret: 'your-secret-key',
@@ -28,7 +26,6 @@ app.use(session({
     maxAge: 24 * 60 * 60 * 1000 
   } 
 }));
-
 
 const authClient = new auth_pb_grpc.AccountServiceClient(
   'localhost:8000',
@@ -45,30 +42,20 @@ const groupClient = new group_pb_grpc.GroupChatServiceClient(
   grpc.credentials.createInsecure()
 );
 
-
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../Client/Views'));
-
 
 app.use(express.static(path.join(__dirname, '../Client')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 const checkAuth = (req, res, next) => {
-  if (req.session.user) {  
-    req.isAuthenticated = true;
-  } else {
-    req.isAuthenticated = false;
-  }
+  req.isAuthenticated = !!req.session.user;
   next();
 };
 app.use(checkAuth);
 
-
 function transformUserData(response) {
-
-
   return {
     url: response.getUrl(),
     myself: {
@@ -88,13 +75,10 @@ function transformUserData(response) {
   };
 }
 
-// Routes
 app.get('/', (req, res) => {
   if (req.isAuthenticated) return res.redirect('/main');
-  
   const flash = req.session.flash;
   delete req.session.flash;
-  
   res.render('index', {
     message: flash?.message || null,
     url: flash?.url || null,
@@ -106,111 +90,55 @@ app.get('/', (req, res) => {
 });
 
 app.get('/main', (req, res) => {
-  if (!req.isAuthenticated) {
-    return res.redirect('/');
-  }
-  
-  // Ensure user data exists in session
-  if (!req.session.user) {
-    return res.status(401).redirect('/logout');
-  }
-
+  if (!req.isAuthenticated) return res.redirect('/');
+  if (!req.session.user) return res.status(401).redirect('/logout');
   res.render('main', { 
-    user: req.session.user || {}, // Provide empty object as fallback
+    user: req.session.user || {},
     contacts: req.session.contacts || [],
     groups: req.session.groups || [],
     url: req.session.url 
   });
 });
 
-
-// Authentication routes
 app.post('/register', (req, res) => {
-  const { username, displayName, password } = req.body;
-
   const request = new auth_pb.CreateAccountRequest();
-  request.setUsername(username);
-  request.setDisplayname(displayName);
-  request.setPassword(password);
+  request.setUsername(req.body.username);
+  request.setDisplayname(req.body.displayName);
+  request.setPassword(req.body.password);
 
   authClient.createAccount(request, (err, response) => {
     if (err) {
-      console.error('Error creating account:', err);
-      req.session.flash = {
-        message: 'Error creating account. Please try again.',
-        formToShow: 'register'
-      };
+      req.session.flash = { message: 'Error creating account', formToShow: 'register' };
       return res.redirect('/');
     }
-
-    const status = response.getStatus();
-    if (status === common_pb.ResponseStatus.SUCCESS) {
-      req.session.flash = {
-        message: 'Registration successful!',
-        ...transformUserData(response),
-        formToShow: 'login'
-      };
-    } else if (status === common_pb.ResponseStatus.ACCOUNT_EXISTS) {
-      req.session.flash = {
-        message: 'Username is already taken.',
-        formToShow: 'register'
-      };
+    if (response.getStatus() === common_pb.ResponseStatus.SUCCESS) {
+      req.session.flash = { message: 'Registration successful', formToShow: 'login' };
     } else {
-      req.session.flash = {
-        message: 'Registration failed. Please try again.',
-        formToShow: 'register'
-      };
+      req.session.flash = { message: 'Registration failed', formToShow: 'register' };
     }
     res.redirect('/');
   });
 });
 
 app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-
   const request = new auth_pb.LoginAccountRequest();
-  request.setUsername(username);
-  request.setPassword(password);
+  request.setUsername(req.body.username);
+  request.setPassword(req.body.password);
 
   authClient.loginAccount(request, (err, response) => {
     if (err) {
-      console.error('Error logging in:', err);
-      req.session.flash = {
-        message: 'Error logging in. Please try again.',
-        formToShow: 'login'
-      };
+      req.session.flash = { message: 'Login error', formToShow: 'login' };
       return res.redirect('/');
     }
-
-    const status = response.getStatus();
-    if (status === common_pb.ResponseStatus.SUCCESS) {
+    if (response.getStatus() === common_pb.ResponseStatus.SUCCESS) {
       const userData = transformUserData(response);
-      
       req.session.user = userData.myself;
       req.session.contacts = userData.contacts;
       req.session.groups = userData.groups;
-      res.cookie('authToken', 'your-auth-token', { 
-        maxAge: 24 * 60 * 60 * 1000, 
-        httpOnly: true
-      });
-
+      res.cookie('authToken', 'token', { maxAge: 86400000, httpOnly: true });
       return res.redirect('/main');
-    } else if (status === common_pb.ResponseStatus.ACCOUNT_NOT_FOUND) {
-      req.session.flash = {
-        message: 'Account not found.',
-        formToShow: 'login'
-      };
-    } else if (status === common_pb.ResponseStatus.UNAUTHORIZED) {
-      req.session.flash = {
-        message: 'Wrong username or password.',
-        formToShow: 'login'
-      };
-    } else {
-      req.session.flash = {
-        message: 'Login failed. Please try again.',
-        formToShow: 'login'
-      };
     }
+    req.session.flash = { message: 'Login failed', formToShow: 'login' };
     res.redirect('/');
   });
 });
@@ -221,289 +149,147 @@ app.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
-// Message API endpoints
 app.get('/api/messages/user/:userId', (req, res) => {
-  // Authentication check
-  if (!req.isAuthenticated) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  // Validate userId parameter
+  if (!req.isAuthenticated) return res.status(401).json({ error: 'Unauthorized' });
   const toUserId = parseInt(req.params.userId);
-  if (isNaN(toUserId)) {
-    return res.status(400).json({ error: 'Invalid user ID' });
-  }
+  if (isNaN(toUserId)) return res.status(400).json({ error: 'Invalid ID' });
 
-  try {
-    // Create request object
-    const request = new user_pb.LoadMessageRequest();
-    
-    // Set from user (current authenticated user)
-    const fromUser = new common_pb.MessageUser();
-    fromUser.setUserid(parseInt(req.session.user.userId));
-    fromUser.setUsername(req.session.user.userName);
-    // sentat is optional in your proto, so we can omit it
-    
-    // Set to user (message recipient)
-    const toUser = new common_pb.MessageUser();
-    toUser.setUserid(toUserId);
-    // Note: You might want to fetch the recipient's username from DB if needed
-    
-    // Set users on the request (using exact proto field names)
-    request.setFromuser(fromUser);
-    request.setTouser(toUser);
-    
-    // Make gRPC call
-    userClient.loadMessages(request, (err, response) => {
-      if (err) {
-        console.error('gRPC Error:', err);
-        return res.status(500).json({ error: 'Internal server error' });
-      }
+  const request = new user_pb.LoadMessageRequest();
+  const fromUser = new common_pb.MessageUser();
+  fromUser.setUserid(parseInt(req.session.user.userId));
+  fromUser.setUsername(req.session.user.userName);
+  const toUser = new common_pb.MessageUser();
+  toUser.setUserid(toUserId);
+  request.setFromuser(fromUser);
+  request.setTouser(toUser);
 
-      // Process response
-      const messages = response.getSendersList().map((sender, index) => {
-        const receiver = response.getReceiversList()[index];
-        return {
-          sender: {
-            userId: sender.getUserid(),
-            username: sender.getUsername()
-          },
-          receiver: {
-            userId: receiver.getUserid(),
-            username: receiver.getUsername()
-          },
-          message: response.getMessagesList()[index],
-          timestamp: response.getTimestampsList()[index],
-          isGroup: false
-        };
-      });
-
-      res.json({ messages });
-    });
-  } catch (error) {
-    console.error('Request processing error:', error);
-    res.status(400).json({ error: 'Bad request' });
-  }
+  userClient.loadMessages(request, (err, response) => {
+    if (err) return res.status(500).json({ error: 'Internal error' });
+    const messages = response.getSendersList().map((sender, index) => ({
+      sender: { userId: sender.getUserid(), username: sender.getUsername() },
+      receiver: { userId: response.getReceiversList()[index].getUserid() },
+      message: response.getMessagesList()[index],
+      timestamp: response.getTimestampsList()[index],
+      isGroup: false
+    }));
+    res.json({ messages });
+  });
 });
 
-// Group messages endpoint
-app.get('/api/messages/group/:groupId', async (req, res) => {
-  // Authentication check
-  if (!req.isAuthenticated) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  // Validate groupId parameter
+app.get('/api/messages/group/:groupId', (req, res) => {
+  if (!req.isAuthenticated) return res.status(401).json({ error: 'Unauthorized' });
   const groupId = parseInt(req.params.groupId);
-  if (isNaN(groupId)) {
-    return res.status(400).json({ error: 'Invalid group ID' });
-  }
+  if (isNaN(groupId)) return res.status(400).json({ error: 'Invalid ID' });
 
-  try {
-    // Create request object
-    const request = new group_pb.LoadMessageRequest();
-    
-    // Set from user (current authenticated user)
-    const fromUser = new common_pb.MessageUser();
-    fromUser.setUserid(parseInt(req.session.user.userId));
-    fromUser.setUsername(req.session.user.userName);
-    
-    // Set request fields
-    request.setFromuser(fromUser);
-    request.setGroupid(groupId);
+  const request = new group_pb.LoadMessageRequest();
+  const fromUser = new common_pb.MessageUser();
+  fromUser.setUserid(parseInt(req.session.user.userId));
+  fromUser.setUsername(req.session.user.userName);
+  request.setFromuser(fromUser);
+  request.setGroupid(groupId);
 
-    // Make gRPC call
-    groupClient.loadMessages(request, (err, response) => {
-      if (err) {
-        console.error('gRPC Error:', err.code, err.message, err.details);
-        
-        // Handle specific gRPC error codes
-        if (err.code === grpc.status.UNIMPLEMENTED) {
-          return res.status(501).json({ error: 'Service not implemented' });
-        }
-        if (err.code === grpc.status.NOT_FOUND) {
-          return res.status(404).json({ error: 'Group not found' });
-        }
-        return res.status(500).json({ error: 'Failed to load group messages' });
-      }
-
-      // Process response
-      const messages = response.getSendersList().map((sender, index) => {
-        return {
-          sender: {
-            userId: sender.getUserid(),  // Note: getUserid() not getUserId()
-            username: sender.getUsername() // Note: getUsername() not getUserName()
-          },
-          groupId: groupId,
-          message: response.getMessagesList()[index],
-          timestamp: response.getTimestampsList()[index],
-          isGroup: true
-        };
-      });
-
-      res.json({ messages });
-    });
-  } catch (error) {
-    console.error('Request processing error:', error);
-    res.status(400).json({ 
-      error: 'Invalid request parameters',
-      details: error.message 
-    });
-  }
+  groupClient.loadMessages(request, (err, response) => {
+    if (err) return res.status(500).json({ error: 'Internal error' });
+    const messages = response.getSendersList().map((sender, index) => ({
+      sender: { userId: sender.getUserid(), username: sender.getUsername() },
+      groupId,
+      message: response.getMessagesList()[index],
+      timestamp: response.getTimestampsList()[index],
+      isGroup: true
+    }));
+    res.json({ messages });
+  });
 });
-// Send message endpoints
+
 app.post('/api/messages/user/send', (req, res) => {
   if (!req.isAuthenticated) return res.status(401).json({ error: 'Unauthorized' });
 
-  const { recipientId, message } = req.body;
-  console.log(req.body);
   const request = new user_pb.SendMessageRequest();
-  
   const fromUser = new common_pb.MessageUser();
   fromUser.setUserid(req.session.user.userId);
   fromUser.setUsername(req.session.user.userName);
-  
   const toUser = new common_pb.MessageUser();
-  toUser.setUserid(parseInt(recipientId));
-  
-  request.setFromuser(fromUser);
-  request.setTouser(toUser);
-  request.setTextmessage(message);
+  toUser.setUserid(parseInt(req.body.recipientId));
+  request.setSender(fromUser);
+  request.setReceiver(toUser);
+  request.setMessage(req.body.message);
 
-  const stream = userClient.sendUserMessage();
-  
-  stream.on('data', (response) => {
-    if (response.getResponse() === common_pb.MessageResponseStatus.MESSAGESUCCESS) {
-      res.json({ success: true, timestamp: new Date().toISOString() });
-    } else {
-      res.status(500).json({ error: 'Failed to send message' });
-    }
-  });
-  
-  stream.on('error', (err) => {
-    console.error('Error sending message:', err);
-    res.status(500).json({ error: 'Failed to send message' });
-  });
-  
+  const stream = userClient.sendMessages();
+  stream.on('data', () => res.json({ success: true }));
+  stream.on('error', () => res.status(500).json({ error: 'Send failed' }));
   stream.write(request);
 });
 
 app.post('/api/messages/group/send', (req, res) => {
   if (!req.isAuthenticated) return res.status(401).json({ error: 'Unauthorized' });
 
-  const { groupId, message } = req.body;
-
   const request = new group_pb.SendMessageRequest();
-  
   const fromUser = new common_pb.MessageUser();
   fromUser.setUserid(req.session.user.userId);
   fromUser.setUsername(req.session.user.userName);
-  
   request.setFromuser(fromUser);
-  request.setGroupid(parseInt(groupId));
-  request.setTextmessage(message);
+  request.setGroupid(parseInt(req.body.groupId));
+  request.setTextmessage(req.body.message);
 
   const stream = groupClient.sendUserMessage();
-  
-  stream.on('data', (response) => {
-    if (response.getResponse() === common_pb.MessageResponseStatus.MESSAGESUCCESS) {
-      res.json({ success: true, timestamp: new Date().toISOString() });
-    } else {
-      res.status(500).json({ error: 'Failed to send message' });
-    }
-  });
-  
-  stream.on('error', (err) => {
-    console.error('Error sending group message:', err);
-    res.status(500).json({ error: 'Failed to send group message' });
-  });
-  
+  stream.on('data', () => res.json({ success: true }));
+  stream.on('error', () => res.status(500).json({ error: 'Send failed' }));
   stream.write(request);
 });
 
-// Receive message streams
 app.get('/api/messages/user/stream', (req, res) => {
-  if (!req.isAuthenticated) return res.status(401).json({ error: 'Unauthorized' });
+  if (!req.isAuthenticated) return res.status(401).end();
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
-  res.flushHeaders();
 
   const request = new user_pb.ReceiveMessageRequest();
   const fromUser = new common_pb.MessageUser();
-  fromUser.setUserid(req.session.user.userId);
+  fromUser.setUserid(parseInt(req.session.user.userId));
   fromUser.setUsername(req.session.user.userName);
   request.setFromuser(fromUser);
 
   const stream = userClient.receiveUserMessage(request);
-  
   stream.on('data', (response) => {
-    const message = {
-      senderId: response.getFromuser().getUserId(),
-      senderName: response.getFromuser().getUserName(),
+    res.write(`data: ${JSON.stringify({
+      senderId: response.getFromuser().getUserid(),
+      senderName: response.getFromuser().getUsername(),
       message: response.getTextmessage(),
       timestamp: new Date().toISOString(),
       isGroup: false
-    };
-    res.write(`data: ${JSON.stringify(message)}\n\n`);
+    })}\n\n`);
   });
-  
-  stream.on('error', (err) => {
-    console.error('Error in user message stream:', err);
-    res.end();
-  });
-  
-  req.on('close', () => {
-    stream.cancel();
-  });
+  stream.on('error', () => res.end());
+  req.on('close', () => stream.cancel());
 });
 
 app.get('/api/messages/group/stream', (req, res) => {
-  if (!req.isAuthenticated) return res.status(401).json({ error: 'Unauthorized' });
+  if (!req.isAuthenticated) return res.status(401).end();
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
-  res.flushHeaders();
 
   const request = new group_pb.ReceiveMessageRequest();
   const fromUser = new common_pb.MessageUser();
-  fromUser.setUserid(req.session.user.userId);
+  fromUser.setUserid(parseInt(req.session.user.userId));
   fromUser.setUsername(req.session.user.userName);
   request.setFromuser(fromUser);
 
   const stream = groupClient.receiveUserMessage(request);
-  
   stream.on('data', (response) => {
-    const message = {
-      senderId: response.getFromuser().getUserId(),
-      senderName: response.getFromuser().getUserName(),
+    res.write(`data: ${JSON.stringify({
+      senderId: response.getFromuser().getUserid(),
+      senderName: response.getFromuser().getUsername(),
       groupId: response.getGroupid(),
       message: response.getTextmessage(),
       timestamp: new Date().toISOString(),
       isGroup: true
-    };
-    res.write(`data: ${JSON.stringify(message)}\n\n`);
+    })}\n\n`);
   });
-  
-  stream.on('error', (err) => {
-    console.error('Error in group message stream:', err);
-    res.end();
-  });
-  
-  req.on('close', () => {
-    stream.cancel();
-  });
+  stream.on('error', () => res.end());
+  req.on('close', () => stream.cancel());
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', err.stack);
-  res.status(500).send('Something broke!');
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

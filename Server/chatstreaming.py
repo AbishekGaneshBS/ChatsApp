@@ -202,7 +202,7 @@ class UserChatService(user_pb_grpc.UserChatServiceServicer):
                 sender = common_pb.MessageUser(
                     userid=sender_id,
                     username=sender_name,
-                    timestamp=timestamp
+                    sentat=timestamp
                 )
                 
                 receiver_id = to_user_id if sender_id == from_user_id else from_user_id
@@ -211,13 +211,13 @@ class UserChatService(user_pb_grpc.UserChatServiceServicer):
                 receiver = common_pb.MessageUser(
                     userid=receiver_id,
                     username=receiver_name,
-                    timestamp=timestamp
+                    sentat=timestamp
                 )
                 
-                response.sender.append(sender)
-                response.receiver.append(receiver)
-                response.message.append(message)
-                response.timestamp.append(timestamp)
+                response.senders.append(sender)
+                response.receivers.append(receiver)
+                response.messages.append(message)
+                response.timestamps.append(timestamp)
         except Exception as e:
             print(f"Error in LoadUserMessage: {e}")
             context.set_code(grpc.StatusCode.INTERNAL)
@@ -229,21 +229,21 @@ class UserChatService(user_pb_grpc.UserChatServiceServicer):
         async for request in request_iterator:
             response = user_pb.SendMessageResponse()
             try:
-                from_user_id = request.fromuser.userid
-                to_user_id = request.touser.userid
-                message = request.textmessage
+                from_user_id = request.sender.userid
+                to_user_id = request.receiver.userid
+                message = request.message
 
                 success = await self.chat_manager.send_user_message(from_user_id, to_user_id, message)
-                response.response = (
-                    common_pb.MessageResponseStatus.MESSAGESUCCESS if success
-                    else common_pb.MessageResponseStatus.MESSAGEFAILURE
+                response.status = (
+                    common_pb.MessageStatus.DELIVERED if success
+                    else common_pb.MessageStatus.FAILED
                 )
             except ValueError as e:
                 print(f"Validation error: {e}")
-                response.response = common_pb.MessageResponseStatus.MESSAGEFAILURE
+                response.status = common_pb.MessageStatus.FAILED
             except Exception as e:
                 print(f"Error in SendUserMessage: {e}")
-                response.response = common_pb.MessageResponseStatus.MESSAGEFAILURE
+                response.status = common_pb.MessageStatus.FAILED
             
             yield response
 
