@@ -356,7 +356,7 @@ app.post('/api/messages/user/send', (req, res) => {
   if (!req.isAuthenticated) return res.status(401).json({ error: 'Unauthorized' });
 
   const { recipientId, message } = req.body;
-
+  console.log(req.body);
   const request = new user_pb.SendMessageRequest();
   
   const fromUser = new common_pb.MessageUser();
