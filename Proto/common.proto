@@ -14,15 +14,15 @@ enum ResponseStatus {
 
 
 message User {
-    int32 id = 1;              
+    int32 userid = 1;              
     string username = 2;        
     string displayname = 3;    
 }
 
 
 message Group {
-    int32 id = 1;               
-    string name = 2;            
+    int32 groupid = 1;               
+    string groupname = 2;            
 }
 
 

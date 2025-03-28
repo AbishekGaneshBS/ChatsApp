@@ -121,7 +121,7 @@ proto.ChatsApp.common.User.prototype.toObject = function(opt_includeInstance) {
  */
 proto.ChatsApp.common.User.toObject = function(includeInstance, msg) {
   var f, obj = {
-    id: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    userid: jspb.Message.getFieldWithDefault(msg, 1, 0),
     username: jspb.Message.getFieldWithDefault(msg, 2, ""),
     displayname: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
@@ -162,7 +162,7 @@ proto.ChatsApp.common.User.deserializeBinaryFromReader = function(msg, reader) {
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setId(value);
+      msg.setUserid(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
@@ -201,7 +201,7 @@ proto.ChatsApp.common.User.prototype.serializeBinary = function() {
  */
 proto.ChatsApp.common.User.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getId();
+  f = message.getUserid();
   if (f !== 0) {
     writer.writeInt32(
       1,
@@ -226,10 +226,10 @@ proto.ChatsApp.common.User.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional int32 id = 1;
+ * optional int32 userid = 1;
  * @return {number}
  */
-proto.ChatsApp.common.User.prototype.getId = function() {
+proto.ChatsApp.common.User.prototype.getUserid = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -238,7 +238,7 @@ proto.ChatsApp.common.User.prototype.getId = function() {
  * @param {number} value
  * @return {!proto.ChatsApp.common.User} returns this
  */
-proto.ChatsApp.common.User.prototype.setId = function(value) {
+proto.ChatsApp.common.User.prototype.setUserid = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 
@@ -311,8 +311,8 @@ proto.ChatsApp.common.Group.prototype.toObject = function(opt_includeInstance) {
  */
 proto.ChatsApp.common.Group.toObject = function(includeInstance, msg) {
   var f, obj = {
-    id: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    name: jspb.Message.getFieldWithDefault(msg, 2, "")
+    groupid: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    groupname: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -351,11 +351,11 @@ proto.ChatsApp.common.Group.deserializeBinaryFromReader = function(msg, reader) 
     switch (field) {
     case 1:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setId(value);
+      msg.setGroupid(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setName(value);
+      msg.setGroupname(value);
       break;
     default:
       reader.skipField();
@@ -386,14 +386,14 @@ proto.ChatsApp.common.Group.prototype.serializeBinary = function() {
  */
 proto.ChatsApp.common.Group.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getId();
+  f = message.getGroupid();
   if (f !== 0) {
     writer.writeInt32(
       1,
       f
     );
   }
-  f = message.getName();
+  f = message.getGroupname();
   if (f.length > 0) {
     writer.writeString(
       2,
@@ -404,10 +404,10 @@ proto.ChatsApp.common.Group.serializeBinaryToWriter = function(message, writer) 
 
 
 /**
- * optional int32 id = 1;
+ * optional int32 groupid = 1;
  * @return {number}
  */
-proto.ChatsApp.common.Group.prototype.getId = function() {
+proto.ChatsApp.common.Group.prototype.getGroupid = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
@@ -416,16 +416,16 @@ proto.ChatsApp.common.Group.prototype.getId = function() {
  * @param {number} value
  * @return {!proto.ChatsApp.common.Group} returns this
  */
-proto.ChatsApp.common.Group.prototype.setId = function(value) {
+proto.ChatsApp.common.Group.prototype.setGroupid = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
 /**
- * optional string name = 2;
+ * optional string groupname = 2;
  * @return {string}
  */
-proto.ChatsApp.common.Group.prototype.getName = function() {
+proto.ChatsApp.common.Group.prototype.getGroupname = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -434,7 +434,7 @@ proto.ChatsApp.common.Group.prototype.getName = function() {
  * @param {string} value
  * @return {!proto.ChatsApp.common.Group} returns this
  */
-proto.ChatsApp.common.Group.prototype.setName = function(value) {
+proto.ChatsApp.common.Group.prototype.setGroupname = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
 };
 

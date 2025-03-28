@@ -700,7 +700,7 @@ proto.ChatsApp.user.ReceiveMessageRequest.prototype.toObject = function(opt_incl
  */
 proto.ChatsApp.user.ReceiveMessageRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    fromUser: (f = msg.getFromUser()) && common_pb.MessageUser.toObject(includeInstance, f)
+    fromuser: (f = msg.getFromuser()) && common_pb.MessageUser.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -740,7 +740,7 @@ proto.ChatsApp.user.ReceiveMessageRequest.deserializeBinaryFromReader = function
     case 1:
       var value = new common_pb.MessageUser;
       reader.readMessage(value,common_pb.MessageUser.deserializeBinaryFromReader);
-      msg.setFromUser(value);
+      msg.setFromuser(value);
       break;
     default:
       reader.skipField();
@@ -771,7 +771,7 @@ proto.ChatsApp.user.ReceiveMessageRequest.prototype.serializeBinary = function()
  */
 proto.ChatsApp.user.ReceiveMessageRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getFromUser();
+  f = message.getFromuser();
   if (f != null) {
     writer.writeMessage(
       1,
@@ -783,10 +783,10 @@ proto.ChatsApp.user.ReceiveMessageRequest.serializeBinaryToWriter = function(mes
 
 
 /**
- * optional ChatsApp.common.MessageUser from_user = 1;
+ * optional ChatsApp.common.MessageUser fromuser = 1;
  * @return {?proto.ChatsApp.common.MessageUser}
  */
-proto.ChatsApp.user.ReceiveMessageRequest.prototype.getFromUser = function() {
+proto.ChatsApp.user.ReceiveMessageRequest.prototype.getFromuser = function() {
   return /** @type{?proto.ChatsApp.common.MessageUser} */ (
     jspb.Message.getWrapperField(this, common_pb.MessageUser, 1));
 };
@@ -796,7 +796,7 @@ proto.ChatsApp.user.ReceiveMessageRequest.prototype.getFromUser = function() {
  * @param {?proto.ChatsApp.common.MessageUser|undefined} value
  * @return {!proto.ChatsApp.user.ReceiveMessageRequest} returns this
 */
-proto.ChatsApp.user.ReceiveMessageRequest.prototype.setFromUser = function(value) {
+proto.ChatsApp.user.ReceiveMessageRequest.prototype.setFromuser = function(value) {
   return jspb.Message.setWrapperField(this, 1, value);
 };
 
@@ -805,8 +805,8 @@ proto.ChatsApp.user.ReceiveMessageRequest.prototype.setFromUser = function(value
  * Clears the message field making it undefined.
  * @return {!proto.ChatsApp.user.ReceiveMessageRequest} returns this
  */
-proto.ChatsApp.user.ReceiveMessageRequest.prototype.clearFromUser = function() {
-  return this.setFromUser(undefined);
+proto.ChatsApp.user.ReceiveMessageRequest.prototype.clearFromuser = function() {
+  return this.setFromuser(undefined);
 };
 
 
@@ -814,7 +814,7 @@ proto.ChatsApp.user.ReceiveMessageRequest.prototype.clearFromUser = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.ChatsApp.user.ReceiveMessageRequest.prototype.hasFromUser = function() {
+proto.ChatsApp.user.ReceiveMessageRequest.prototype.hasFromuser = function() {
   return jspb.Message.getField(this, 1) != null;
 };
 
@@ -1033,8 +1033,8 @@ proto.ChatsApp.user.SendMessageRequest.prototype.toObject = function(opt_include
 proto.ChatsApp.user.SendMessageRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     sender: (f = msg.getSender()) && common_pb.MessageUser.toObject(includeInstance, f),
-    recipient: (f = msg.getRecipient()) && common_pb.MessageUser.toObject(includeInstance, f),
-    content: jspb.Message.getFieldWithDefault(msg, 3, "")
+    receiver: (f = msg.getReceiver()) && common_pb.MessageUser.toObject(includeInstance, f),
+    message: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -1079,11 +1079,11 @@ proto.ChatsApp.user.SendMessageRequest.deserializeBinaryFromReader = function(ms
     case 2:
       var value = new common_pb.MessageUser;
       reader.readMessage(value,common_pb.MessageUser.deserializeBinaryFromReader);
-      msg.setRecipient(value);
+      msg.setReceiver(value);
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
-      msg.setContent(value);
+      msg.setMessage(value);
       break;
     default:
       reader.skipField();
@@ -1122,7 +1122,7 @@ proto.ChatsApp.user.SendMessageRequest.serializeBinaryToWriter = function(messag
       common_pb.MessageUser.serializeBinaryToWriter
     );
   }
-  f = message.getRecipient();
+  f = message.getReceiver();
   if (f != null) {
     writer.writeMessage(
       2,
@@ -1130,7 +1130,7 @@ proto.ChatsApp.user.SendMessageRequest.serializeBinaryToWriter = function(messag
       common_pb.MessageUser.serializeBinaryToWriter
     );
   }
-  f = message.getContent();
+  f = message.getMessage();
   if (f.length > 0) {
     writer.writeString(
       3,
@@ -1178,10 +1178,10 @@ proto.ChatsApp.user.SendMessageRequest.prototype.hasSender = function() {
 
 
 /**
- * optional ChatsApp.common.MessageUser recipient = 2;
+ * optional ChatsApp.common.MessageUser receiver = 2;
  * @return {?proto.ChatsApp.common.MessageUser}
  */
-proto.ChatsApp.user.SendMessageRequest.prototype.getRecipient = function() {
+proto.ChatsApp.user.SendMessageRequest.prototype.getReceiver = function() {
   return /** @type{?proto.ChatsApp.common.MessageUser} */ (
     jspb.Message.getWrapperField(this, common_pb.MessageUser, 2));
 };
@@ -1191,7 +1191,7 @@ proto.ChatsApp.user.SendMessageRequest.prototype.getRecipient = function() {
  * @param {?proto.ChatsApp.common.MessageUser|undefined} value
  * @return {!proto.ChatsApp.user.SendMessageRequest} returns this
 */
-proto.ChatsApp.user.SendMessageRequest.prototype.setRecipient = function(value) {
+proto.ChatsApp.user.SendMessageRequest.prototype.setReceiver = function(value) {
   return jspb.Message.setWrapperField(this, 2, value);
 };
 
@@ -1200,8 +1200,8 @@ proto.ChatsApp.user.SendMessageRequest.prototype.setRecipient = function(value) 
  * Clears the message field making it undefined.
  * @return {!proto.ChatsApp.user.SendMessageRequest} returns this
  */
-proto.ChatsApp.user.SendMessageRequest.prototype.clearRecipient = function() {
-  return this.setRecipient(undefined);
+proto.ChatsApp.user.SendMessageRequest.prototype.clearReceiver = function() {
+  return this.setReceiver(undefined);
 };
 
 
@@ -1209,16 +1209,16 @@ proto.ChatsApp.user.SendMessageRequest.prototype.clearRecipient = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.ChatsApp.user.SendMessageRequest.prototype.hasRecipient = function() {
+proto.ChatsApp.user.SendMessageRequest.prototype.hasReceiver = function() {
   return jspb.Message.getField(this, 2) != null;
 };
 
 
 /**
- * optional string content = 3;
+ * optional string message = 3;
  * @return {string}
  */
-proto.ChatsApp.user.SendMessageRequest.prototype.getContent = function() {
+proto.ChatsApp.user.SendMessageRequest.prototype.getMessage = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
@@ -1227,7 +1227,7 @@ proto.ChatsApp.user.SendMessageRequest.prototype.getContent = function() {
  * @param {string} value
  * @return {!proto.ChatsApp.user.SendMessageRequest} returns this
  */
-proto.ChatsApp.user.SendMessageRequest.prototype.setContent = function(value) {
+proto.ChatsApp.user.SendMessageRequest.prototype.setMessage = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
 };
 

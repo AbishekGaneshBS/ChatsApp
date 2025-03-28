@@ -1254,8 +1254,8 @@ proto.ChatsApp.group.ReceiveMessageResponse.prototype.toObject = function(opt_in
 proto.ChatsApp.group.ReceiveMessageResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     sender: (f = msg.getSender()) && common_pb.MessageUser.toObject(includeInstance, f),
-    groupId: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    messageId: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    groupid: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    messageid: jspb.Message.getFieldWithDefault(msg, 3, ""),
     content: jspb.Message.getFieldWithDefault(msg, 4, ""),
     timestamp: jspb.Message.getFieldWithDefault(msg, 5, "")
   };
@@ -1301,11 +1301,11 @@ proto.ChatsApp.group.ReceiveMessageResponse.deserializeBinaryFromReader = functi
       break;
     case 2:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setGroupId(value);
+      msg.setGroupid(value);
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
-      msg.setMessageId(value);
+      msg.setMessageid(value);
       break;
     case 4:
       var value = /** @type {string} */ (reader.readString());
@@ -1352,14 +1352,14 @@ proto.ChatsApp.group.ReceiveMessageResponse.serializeBinaryToWriter = function(m
       common_pb.MessageUser.serializeBinaryToWriter
     );
   }
-  f = message.getGroupId();
+  f = message.getGroupid();
   if (f !== 0) {
     writer.writeInt32(
       2,
       f
     );
   }
-  f = message.getMessageId();
+  f = message.getMessageid();
   if (f.length > 0) {
     writer.writeString(
       3,
@@ -1421,10 +1421,10 @@ proto.ChatsApp.group.ReceiveMessageResponse.prototype.hasSender = function() {
 
 
 /**
- * optional int32 group_id = 2;
+ * optional int32 groupid = 2;
  * @return {number}
  */
-proto.ChatsApp.group.ReceiveMessageResponse.prototype.getGroupId = function() {
+proto.ChatsApp.group.ReceiveMessageResponse.prototype.getGroupid = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
@@ -1433,16 +1433,16 @@ proto.ChatsApp.group.ReceiveMessageResponse.prototype.getGroupId = function() {
  * @param {number} value
  * @return {!proto.ChatsApp.group.ReceiveMessageResponse} returns this
  */
-proto.ChatsApp.group.ReceiveMessageResponse.prototype.setGroupId = function(value) {
+proto.ChatsApp.group.ReceiveMessageResponse.prototype.setGroupid = function(value) {
   return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
 /**
- * optional string message_id = 3;
+ * optional string messageid = 3;
  * @return {string}
  */
-proto.ChatsApp.group.ReceiveMessageResponse.prototype.getMessageId = function() {
+proto.ChatsApp.group.ReceiveMessageResponse.prototype.getMessageid = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
@@ -1451,7 +1451,7 @@ proto.ChatsApp.group.ReceiveMessageResponse.prototype.getMessageId = function() 
  * @param {string} value
  * @return {!proto.ChatsApp.group.ReceiveMessageResponse} returns this
  */
-proto.ChatsApp.group.ReceiveMessageResponse.prototype.setMessageId = function(value) {
+proto.ChatsApp.group.ReceiveMessageResponse.prototype.setMessageid = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
 };
 

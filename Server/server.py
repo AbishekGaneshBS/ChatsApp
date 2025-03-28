@@ -74,9 +74,9 @@ class AccountService(auth_pb2_grpc.AccountServiceServicer):
                 return auth_pb2.CreateAccountResponse(status=common_pb2.ResponseStatus.FAILURE)
             
             userid, user_name, display_name, _ = user_data
-            user = common_pb2.User(id=userid, username=user_name, displayname=display_name)
+            user = common_pb2.User(userid=userid, username=user_name, displayname=display_name)
             
-            contacts = [common_pb2.User(id=u[0], username=u[1], displayname=u[2]) for u in get_all_users_except(request.username)]
+            contacts = [common_pb2.User(userid=u[0], username=u[1], displayname=u[2]) for u in get_all_users_except(request.username)]
             groups = [common_pb2.Group(groupid=u[0], groupname=u[1]) for u in get_all_groups(request.username)]
             return auth_pb2.CreateAccountResponse(
                 status=common_pb2.ResponseStatus.SUCCESS,
@@ -100,9 +100,9 @@ class AccountService(auth_pb2_grpc.AccountServiceServicer):
             if not verify_password(request.password, hashed_password):
                 return auth_pb2.LoginAccountResponse(status=common_pb2.ResponseStatus.UNAUTHORIZED)
             
-            user = common_pb2.User(id=userid, username=user_name, displayname=display_name)
+            user = common_pb2.User(userid=userid, username=user_name, displayname=display_name)
             
-            contacts = [common_pb2.User(id=u[0], username=u[1], displayname=u[2]) for u in get_all_users_except(request.username)]
+            contacts = [common_pb2.User(userid=u[0], username=u[1], displayname=u[2]) for u in get_all_users_except(request.username)]
             groups = [common_pb2.Group(groupid=u[0], groupname=u[1]) for u in get_all_groups(request.username)]
             return auth_pb2.LoginAccountResponse(
                 status=common_pb2.ResponseStatus.SUCCESS,

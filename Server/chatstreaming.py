@@ -92,7 +92,6 @@ class ChatManager:
                 )
                 conn.commit()
 
-            # Notify receiver if online
             if receiver_id in self.active_user_streams:
                 queue = self.active_user_streams[receiver_id]
                 await queue.put((sender_id, message, timestamp))
@@ -189,11 +188,11 @@ class UserChatService(user_pb_grpc.UserChatServiceServicer):
     def __init__(self, chat_manager: ChatManager):
         self.chat_manager = chat_manager
 
-    async def LoadUserMessage(self, request: user_pb.LoadMessageRequest, context) -> user_pb.LoadMessageResponse:
+    async def LoadMessages(self, request: user_pb.LoadMessageRequest, context) -> user_pb.LoadMessageResponse:
         response = user_pb.LoadMessageResponse()
         try:
-            from_user_id = request.fromuser.user_id
-            to_user_id = request.touser.user_id
+            from_user_id = request.fromuser.userid
+            to_user_id = request.touser.userid
 
             messages = await self.chat_manager.load_user_messages(from_user_id, to_user_id)
             
@@ -201,8 +200,8 @@ class UserChatService(user_pb_grpc.UserChatServiceServicer):
                 sender_name = await self.chat_manager.get_user_name(sender_id)
                 
                 sender = common_pb.MessageUser(
-                    user_id=sender_id,
-                    user_name=sender_name,
+                    userid=sender_id,
+                    username=sender_name,
                     timestamp=timestamp
                 )
                 
@@ -210,8 +209,8 @@ class UserChatService(user_pb_grpc.UserChatServiceServicer):
                 receiver_name = await self.chat_manager.get_user_name(receiver_id)
                 
                 receiver = common_pb.MessageUser(
-                    user_id=receiver_id,
-                    user_name=receiver_name,
+                    userid=receiver_id,
+                    username=receiver_name,
                     timestamp=timestamp
                 )
                 
@@ -225,13 +224,13 @@ class UserChatService(user_pb_grpc.UserChatServiceServicer):
             context.set_details("Failed to load messages")
         return response
 
-    async def SendUserMessage(self, request_iterator: AsyncIterator[user_pb.SendMessageRequest], 
+    async def SendMessages(self, request_iterator: AsyncIterator[user_pb.SendMessageRequest], 
                             context) -> AsyncIterator[user_pb.SendMessageResponse]:
         async for request in request_iterator:
             response = user_pb.SendMessageResponse()
             try:
-                from_user_id = request.fromuser.user_id
-                to_user_id = request.touser.user_id
+                from_user_id = request.fromuser.userid
+                to_user_id = request.touser.userid
                 message = request.textmessage
 
                 success = await self.chat_manager.send_user_message(from_user_id, to_user_id, message)
@@ -248,7 +247,7 @@ class UserChatService(user_pb_grpc.UserChatServiceServicer):
             
             yield response
 
-    async def ReceiveUserMessage(self, request_iterator: AsyncIterator[user_pb.ReceiveMessageRequest], 
+    async def ReceiveMessages(self, request_iterator: AsyncIterator[user_pb.ReceiveMessageRequest], 
                                context) -> AsyncIterator[user_pb.ReceiveMessageResponse]:
         user_id = None
         message_queue = asyncio.Queue()
@@ -256,7 +255,7 @@ class UserChatService(user_pb_grpc.UserChatServiceServicer):
         try:
             async for request in request_iterator:
                 if user_id is None:
-                    user_id = request.fromuser.user_id
+                    user_id = request.fromuser.userid
                     await self.chat_manager.add_user_stream(user_id, message_queue)
                     continue
 
@@ -283,12 +282,12 @@ class GroupChatService(group_pb_grpc.GroupChatServiceServicer):
     def __init__(self, chat_manager: ChatManager):
         self.chat_manager = chat_manager
 
-    async def SendUserMessage(self, request_iterator: AsyncIterator[group_pb.SendMessageRequest], 
+    async def SendMessage(self, request_iterator: AsyncIterator[group_pb.SendMessageRequest], 
                             context) -> AsyncIterator[group_pb.SendMessageResponse]:
         async for request in request_iterator:
             response = group_pb.SendMessageResponse()
             try:
-                from_user_id = request.fromuser.user_id
+                from_user_id = request.fromuser.userid
                 group_id = request.groupid
                 message = request.textmessage
 
@@ -306,7 +305,7 @@ class GroupChatService(group_pb_grpc.GroupChatServiceServicer):
             
             yield response
 
-    async def ReceiveUserMessage(self, request_iterator: AsyncIterator[group_pb.ReceiveMessageRequest], 
+    async def ReceiveMessages(self, request_iterator: AsyncIterator[group_pb.ReceiveMessageRequest], 
                                context) -> AsyncIterator[group_pb.ReceiveMessageResponse]:
         user_id = None
         group_id = None
@@ -315,7 +314,7 @@ class GroupChatService(group_pb_grpc.GroupChatServiceServicer):
         try:
             async for request in request_iterator:
                 if user_id is None:
-                    user_id = request.fromuser.user_id
+                    user_id = request.fromuser.userid
                     group_id = request.groupid  # Now properly getting group_id from request
                     await self.chat_manager.add_group_stream(group_id, user_id, message_queue)
                     continue
@@ -338,6 +337,7 @@ class GroupChatService(group_pb_grpc.GroupChatServiceServicer):
         finally:
             if user_id and group_id:
                 await self.chat_manager.remove_group_stream(group_id, user_id)
+
 
 
 async def serve():

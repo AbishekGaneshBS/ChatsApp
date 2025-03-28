@@ -67,22 +67,22 @@ app.use(checkAuth);
 
 
 function transformUserData(response) {
-  console.log("gRPC response.getMyself():", response.getMyself().toObject());
+
 
   return {
     url: response.getUrl(),
     myself: {
-      userId: response.getMyself().getId(),
+      userId: response.getMyself().getUserid(),
       userName: response.getMyself().getUsername(),
       displayName: response.getMyself().getDisplayname()
     },
     contacts: response.getContactsList().map(contact => ({
-      userId: contact.getId(),
+      userId: contact.getUserid(),
       userName: contact.getUsername(),
       displayName: contact.getDisplayname()
     })),
     groups: response.getGroupsList().map(group => ({
-      groupId: group.getGroupId(),
+      groupId: group.getGroupuserid(),
       groupName: group.getGroupName()
     }))
   };
@@ -223,94 +223,134 @@ app.get('/logout', (req, res) => {
 
 // Message API endpoints
 app.get('/api/messages/user/:userId', (req, res) => {
-  if (!req.isAuthenticated) return res.status(401).json({ error: 'Unauthorized' });
+  // Authentication check
+  if (!req.isAuthenticated) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  // Validate userId parameter
+  const toUserId = parseInt(req.params.userId);
+  if (isNaN(toUserId)) {
+    return res.status(400).json({ error: 'Invalid user ID' });
+  }
 
   try {
+    // Create request object
     const request = new user_pb.LoadMessageRequest();
     
+    // Set from user (current authenticated user)
     const fromUser = new common_pb.MessageUser();
     fromUser.setUserid(parseInt(req.session.user.userId));
     fromUser.setUsername(req.session.user.userName);
+    // sentat is optional in your proto, so we can omit it
     
+    // Set to user (message recipient)
     const toUser = new common_pb.MessageUser();
-    toUser.setUserid(parseInt(req.params.userId));
+    toUser.setUserid(toUserId);
+    // Note: You might want to fetch the recipient's username from DB if needed
     
+    // Set users on the request (using exact proto field names)
     request.setFromuser(fromUser);
     request.setTouser(toUser);
-
+    
+    // Make gRPC call
     userClient.loadMessages(request, (err, response) => {
       if (err) {
-        console.error('Error loading messages:', err);
-        return res.status(500).json({ error: 'Failed to load messages' });
+        console.error('gRPC Error:', err);
+        return res.status(500).json({ error: 'Internal server error' });
       }
 
-      const messages = [];
-      for (let i = 0; i < response.getSendersList().length; i++) {
-        messages.push({
+      // Process response
+      const messages = response.getSendersList().map((sender, index) => {
+        const receiver = response.getReceiversList()[index];
+        return {
           sender: {
-            userId: response.getSendersList()[i].getUserId(),
-            userName: response.getSendersList()[i].getUserName()
+            userId: sender.getUserid(),
+            username: sender.getUsername()
           },
           receiver: {
-            userId: response.getReceiversList()[i].getUserId(),
-            userName: response.getReceiversList()[i].getUserName()
+            userId: receiver.getUserid(),
+            username: receiver.getUsername()
           },
-          message: response.getMessagesList()[i],
-          timestamp: response.getTimestampsList()[i],
+          message: response.getMessagesList()[index],
+          timestamp: response.getTimestampsList()[index],
           isGroup: false
-        });
-      }
+        };
+      });
 
       res.json({ messages });
     });
   } catch (error) {
-    console.error('Error creating request:', error);
-    res.status(400).json({ error: 'Invalid request parameters' });
+    console.error('Request processing error:', error);
+    res.status(400).json({ error: 'Bad request' });
   }
 });
 
 // Group messages endpoint
-app.get('/api/messages/group/:groupId', (req, res) => {
-  if (!req.isAuthenticated) return res.status(401).json({ error: 'Unauthorized' });
+app.get('/api/messages/group/:groupId', async (req, res) => {
+  // Authentication check
+  if (!req.isAuthenticated) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  // Validate groupId parameter
+  const groupId = parseInt(req.params.groupId);
+  if (isNaN(groupId)) {
+    return res.status(400).json({ error: 'Invalid group ID' });
+  }
 
   try {
-    const request = new group_pb.LoadMessageRequest(); // Corrected message type
+    // Create request object
+    const request = new group_pb.LoadMessageRequest();
     
+    // Set from user (current authenticated user)
     const fromUser = new common_pb.MessageUser();
-    fromUser.setUserId(parseInt(req.session.user.userId));
-    fromUser.setUserName(req.session.user.userName);
+    fromUser.setUserid(parseInt(req.session.user.userId));
+    fromUser.setUsername(req.session.user.userName);
     
+    // Set request fields
     request.setFromuser(fromUser);
-    request.setGroupid(parseInt(req.params.groupId));
+    request.setGroupid(groupId);
 
-    groupClient.loadMessages(request, (err, response) => { // Corrected method name
+    // Make gRPC call
+    groupClient.loadMessages(request, (err, response) => {
       if (err) {
-        console.error('Error loading group messages:', err);
+        console.error('gRPC Error:', err.code, err.message, err.details);
+        
+        // Handle specific gRPC error codes
+        if (err.code === grpc.status.UNIMPLEMENTED) {
+          return res.status(501).json({ error: 'Service not implemented' });
+        }
+        if (err.code === grpc.status.NOT_FOUND) {
+          return res.status(404).json({ error: 'Group not found' });
+        }
         return res.status(500).json({ error: 'Failed to load group messages' });
       }
 
-      const messages = [];
-      for (let i = 0; i < response.getSendersList().length; i++) {
-        messages.push({
+      // Process response
+      const messages = response.getSendersList().map((sender, index) => {
+        return {
           sender: {
-            userId: response.getSendersList()[i].getUserId(),
-            userName: response.getSendersList()[i].getUserName()
+            userId: sender.getUserid(),  // Note: getUserid() not getUserId()
+            username: sender.getUsername() // Note: getUsername() not getUserName()
           },
-          groupId: req.params.groupId,
-          message: response.getMessagesList()[i],
-          timestamp: response.getTimestampsList()[i],
+          groupId: groupId,
+          message: response.getMessagesList()[index],
+          timestamp: response.getTimestampsList()[index],
           isGroup: true
-        });
-      }
+        };
+      });
 
       res.json({ messages });
     });
   } catch (error) {
-    console.error('Error creating request:', error);
-    res.status(400).json({ error: 'Invalid request parameters' });
+    console.error('Request processing error:', error);
+    res.status(400).json({ 
+      error: 'Invalid request parameters',
+      details: error.message 
+    });
   }
 });
-
 // Send message endpoints
 app.post('/api/messages/user/send', (req, res) => {
   if (!req.isAuthenticated) return res.status(401).json({ error: 'Unauthorized' });
@@ -320,11 +360,11 @@ app.post('/api/messages/user/send', (req, res) => {
   const request = new user_pb.SendMessageRequest();
   
   const fromUser = new common_pb.MessageUser();
-  fromUser.setUserId(req.session.user.userId);
-  fromUser.setUserName(req.session.user.userName);
+  fromUser.setUserid(req.session.user.userId);
+  fromUser.setUsername(req.session.user.userName);
   
   const toUser = new common_pb.MessageUser();
-  toUser.setUserId(parseInt(recipientId));
+  toUser.setUserid(parseInt(recipientId));
   
   request.setFromuser(fromUser);
   request.setTouser(toUser);
@@ -356,8 +396,8 @@ app.post('/api/messages/group/send', (req, res) => {
   const request = new group_pb.SendMessageRequest();
   
   const fromUser = new common_pb.MessageUser();
-  fromUser.setUserId(req.session.user.userId);
-  fromUser.setUserName(req.session.user.userName);
+  fromUser.setUserid(req.session.user.userId);
+  fromUser.setUsername(req.session.user.userName);
   
   request.setFromuser(fromUser);
   request.setGroupid(parseInt(groupId));
@@ -392,8 +432,8 @@ app.get('/api/messages/user/stream', (req, res) => {
 
   const request = new user_pb.ReceiveMessageRequest();
   const fromUser = new common_pb.MessageUser();
-  fromUser.setUserId(req.session.user.userId);
-  fromUser.setUserName(req.session.user.userName);
+  fromUser.setUserid(req.session.user.userId);
+  fromUser.setUsername(req.session.user.userName);
   request.setFromuser(fromUser);
 
   const stream = userClient.receiveUserMessage(request);
@@ -429,8 +469,8 @@ app.get('/api/messages/group/stream', (req, res) => {
 
   const request = new group_pb.ReceiveMessageRequest();
   const fromUser = new common_pb.MessageUser();
-  fromUser.setUserId(req.session.user.userId);
-  fromUser.setUserName(req.session.user.userName);
+  fromUser.setUserid(req.session.user.userId);
+  fromUser.setUsername(req.session.user.userName);
   request.setFromuser(fromUser);
 
   const stream = groupClient.receiveUserMessage(request);
