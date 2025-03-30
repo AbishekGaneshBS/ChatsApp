@@ -138,8 +138,16 @@ app.post('/login', (req, res) => {
       res.cookie('authToken', 'token', { maxAge: 86400000, httpOnly: true });
       return res.redirect('/main');
     }
-    req.session.flash = { message: 'Login failed', formToShow: 'login' };
-    res.redirect('/');
+    else if (response.getStatus() === common_pb.ResponseStatus.ACCOUNT_NOT_FOUND) {
+      req.session.flash = { message: 'Account not Found.', formToShow: 'login' };
+      res.redirect('/');
+    }
+    else{
+      req.session.flash = { message: 'Wrong Username or Password.', formToShow: 'login' };
+      res.redirect('/');
+    }
+    
+    
   });
 });
 
@@ -147,6 +155,60 @@ app.get('/logout', (req, res) => {
   res.clearCookie('authToken');
   req.session.destroy();
   res.redirect('/');
+});
+
+app.get('/api/messages/user/stream', (req, res) => {
+  if (!req.isAuthenticated) return res.status(401).end();
+
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  const request = new user_pb.ReceiveMessageRequest();
+  const fromUser = new common_pb.MessageUser();
+  fromUser.setUserid(parseInt(req.session.user.userId));
+  fromUser.setUsername(req.session.user.userName);
+  request.setFromuser(fromUser);
+
+  const stream = userClient.receiveMessages(request);
+  stream.on('data', (response) => {
+    res.write(`data: ${JSON.stringify({
+      senderId: response.getFromuser().getUserid(),
+      senderName: response.getFromuser().getUsername(),
+      message: response.getTextmessage(),
+      timestamp: new Date().toISOString(),
+      isGroup: false
+    })}\n\n`);
+  });
+  stream.on('error', () => res.end());
+  req.on('close', () => stream.cancel());
+});
+
+app.get('/api/messages/group/stream', (req, res) => {
+  if (!req.isAuthenticated) return res.status(401).end();
+
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  const request = new group_pb.ReceiveMessageRequest();
+  //const fromUser = new common_pb.MessageUser();
+  console.log(req.session.groups);
+  request.setGroupid(1);
+
+  const stream = groupClient.receiveMessages(request);
+  stream.on('data', (response) => {
+    res.write(`data: ${JSON.stringify({
+      senderId: response.getFromuser().getUserid(),
+      senderName: response.getFromuser().getUsername(),
+      groupId: response.getGroupid(),
+      message: response.getTextmessage(),
+      timestamp: new Date().toISOString(),
+      isGroup: true
+    })}\n\n`);
+  });
+  stream.on('error', () => res.end());
+  req.on('close', () => stream.cancel());
 });
 
 app.get('/api/messages/user/:userId', (req, res) => {
@@ -185,7 +247,7 @@ app.get('/api/messages/group/:groupId', (req, res) => {
   const fromUser = new common_pb.MessageUser();
   fromUser.setUserid(parseInt(req.session.user.userId));
   fromUser.setUsername(req.session.user.userName);
-  request.setFromuser(fromUser);
+  request.setRequester(fromUser);
   request.setGroupid(groupId);
 
   groupClient.loadMessages(request, (err, response) => {
@@ -237,59 +299,6 @@ app.post('/api/messages/group/send', (req, res) => {
   stream.write(request);
 });
 
-app.get('/api/messages/user/stream', (req, res) => {
-  if (!req.isAuthenticated) return res.status(401).end();
 
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-
-  const request = new user_pb.ReceiveMessageRequest();
-  const fromUser = new common_pb.MessageUser();
-  fromUser.setUserid(parseInt(req.session.user.userId));
-  fromUser.setUsername(req.session.user.userName);
-  request.setFromuser(fromUser);
-
-  const stream = userClient.receiveUserMessage(request);
-  stream.on('data', (response) => {
-    res.write(`data: ${JSON.stringify({
-      senderId: response.getFromuser().getUserid(),
-      senderName: response.getFromuser().getUsername(),
-      message: response.getTextmessage(),
-      timestamp: new Date().toISOString(),
-      isGroup: false
-    })}\n\n`);
-  });
-  stream.on('error', () => res.end());
-  req.on('close', () => stream.cancel());
-});
-
-app.get('/api/messages/group/stream', (req, res) => {
-  if (!req.isAuthenticated) return res.status(401).end();
-
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-
-  const request = new group_pb.ReceiveMessageRequest();
-  const fromUser = new common_pb.MessageUser();
-  fromUser.setUserid(parseInt(req.session.user.userId));
-  fromUser.setUsername(req.session.user.userName);
-  request.setFromuser(fromUser);
-
-  const stream = groupClient.receiveUserMessage(request);
-  stream.on('data', (response) => {
-    res.write(`data: ${JSON.stringify({
-      senderId: response.getFromuser().getUserid(),
-      senderName: response.getFromuser().getUsername(),
-      groupId: response.getGroupid(),
-      message: response.getTextmessage(),
-      timestamp: new Date().toISOString(),
-      isGroup: true
-    })}\n\n`);
-  });
-  stream.on('error', () => res.end());
-  req.on('close', () => stream.cancel());
-});
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

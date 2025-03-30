@@ -2,10 +2,10 @@ import asyncio
 import sqlite3
 from datetime import datetime
 from typing import AsyncIterator, Dict, List, Tuple, Optional
-
 import grpc
 from concurrent import futures
 import sys
+
 sys.path.append("Services") 
 from Services import common_pb2 as common_pb
 from Services import user_pb2 as user_pb
@@ -340,6 +340,18 @@ class GroupChatService(group_pb_grpc.GroupChatServiceServicer):
 
 
 
+
+
+async def monitor_quit_command():
+    """Monitors stdin for 'q' + Enter to stop the server."""
+    loop = asyncio.get_running_loop()
+    while True:
+
+        user_input = await loop.run_in_executor(None, input, "Press 'q' + Enter to quit...\n")
+        if user_input.strip().lower() == 'q':
+            print("Stopping server...")
+            return True  
+
 async def serve():
     db_manager = DatabaseManager()
     chat_manager = ChatManager(db_manager)
@@ -354,12 +366,23 @@ async def serve():
     server.add_insecure_port('[::]:50051')
     await server.start()
     print("Server started on port 50051")
-    
-    try:
-        await server.wait_for_termination()
-    except KeyboardInterrupt:
-        await server.stop(0)
 
+
+    server_task = asyncio.create_task(server.wait_for_termination())
+    quit_task = asyncio.create_task(monitor_quit_command())
+
+    
+    done, pending = await asyncio.wait(
+        [server_task, quit_task],
+        return_when=asyncio.FIRST_COMPLETED
+    )
+
+
+    if quit_task in done:
+        print("Shutting down gracefully...")
+        await server.stop(0)
+    else:
+        quit_task.cancel() 
 
 if __name__ == '__main__':
     asyncio.run(serve())
