@@ -10,8 +10,6 @@ const auth_pb_grpc = require('./Services/auth_grpc_pb');
 const common_pb = require('./Services/common_pb');
 const user_pb = require('./Services/user_pb');
 const user_pb_grpc = require('./Services/user_grpc_pb');
-const group_pb = require('./Services/groups_pb');
-const group_pb_grpc = require('./Services/groups_grpc_pb');
 
 const app = express();
 const PORT = 3000;
@@ -33,11 +31,6 @@ const authClient = new auth_pb_grpc.AccountServiceClient(
 );
 
 const userClient = new user_pb_grpc.UserChatServiceClient(
-  'localhost:50051',
-  grpc.credentials.createInsecure()
-);
-
-const groupClient = new group_pb_grpc.GroupChatServiceClient(
   'localhost:50051',
   grpc.credentials.createInsecure()
 );
@@ -67,10 +60,6 @@ function transformUserData(response) {
       userId: contact.getUserid(),
       userName: contact.getUsername(),
       displayName: contact.getDisplayname()
-    })),
-    groups: response.getGroupsList().map(group => ({
-      groupId: group.getGroupuserid(),
-      groupName: group.getGroupName()
     }))
   };
 }
@@ -84,7 +73,6 @@ app.get('/', (req, res) => {
     url: flash?.url || null,
     myself: flash?.myself || null,
     contacts: flash?.contacts || null,
-    groups: flash?.groups || null,
     formToShow: flash?.formToShow || 'login'
   });
 });
@@ -95,7 +83,6 @@ app.get('/main', (req, res) => {
   res.render('main', { 
     user: req.session.user || {},
     contacts: req.session.contacts || [],
-    groups: req.session.groups || [],
     url: req.session.url 
   });
 });
@@ -134,7 +121,6 @@ app.post('/login', (req, res) => {
       const userData = transformUserData(response);
       req.session.user = userData.myself;
       req.session.contacts = userData.contacts;
-      req.session.groups = userData.groups;
       res.cookie('authToken', 'token', { maxAge: 86400000, httpOnly: true });
       return res.redirect('/main');
     }
@@ -146,8 +132,6 @@ app.post('/login', (req, res) => {
       req.session.flash = { message: 'Wrong Username or Password.', formToShow: 'login' };
       res.redirect('/');
     }
-    
-    
   });
 });
 
@@ -169,42 +153,14 @@ app.get('/api/messages/user/stream', (req, res) => {
   fromUser.setUserid(parseInt(req.session.user.userId));
   fromUser.setUsername(req.session.user.userName);
   request.setFromuser(fromUser);
-
+  
   const stream = userClient.receiveMessages(request);
   stream.on('data', (response) => {
     res.write(`data: ${JSON.stringify({
-      senderId: response.getFromuser().getUserid(),
-      senderName: response.getFromuser().getUsername(),
-      message: response.getTextmessage(),
-      timestamp: new Date().toISOString(),
-      isGroup: false
-    })}\n\n`);
-  });
-  stream.on('error', () => res.end());
-  req.on('close', () => stream.cancel());
-});
-
-app.get('/api/messages/group/stream', (req, res) => {
-  if (!req.isAuthenticated) return res.status(401).end();
-
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-
-  const request = new group_pb.ReceiveMessageRequest();
-  //const fromUser = new common_pb.MessageUser();
-  console.log(req.session.groups);
-  request.setGroupid(1);
-
-  const stream = groupClient.receiveMessages(request);
-  stream.on('data', (response) => {
-    res.write(`data: ${JSON.stringify({
-      senderId: response.getFromuser().getUserid(),
-      senderName: response.getFromuser().getUsername(),
-      groupId: response.getGroupid(),
-      message: response.getTextmessage(),
-      timestamp: new Date().toISOString(),
-      isGroup: true
+      senderId: response.getSender().getUserid(),
+      senderName: response.getSender().getUsername(),
+      message: response.getMessage(),
+      timestamp: new Date().toISOString()
     })}\n\n`);
   });
   stream.on('error', () => res.end());
@@ -231,33 +187,7 @@ app.get('/api/messages/user/:userId', (req, res) => {
       sender: { userId: sender.getUserid(), username: sender.getUsername() },
       receiver: { userId: response.getReceiversList()[index].getUserid() },
       message: response.getMessagesList()[index],
-      timestamp: response.getTimestampsList()[index],
-      isGroup: false
-    }));
-    res.json({ messages });
-  });
-});
-
-app.get('/api/messages/group/:groupId', (req, res) => {
-  if (!req.isAuthenticated) return res.status(401).json({ error: 'Unauthorized' });
-  const groupId = parseInt(req.params.groupId);
-  if (isNaN(groupId)) return res.status(400).json({ error: 'Invalid ID' });
-
-  const request = new group_pb.LoadMessageRequest();
-  const fromUser = new common_pb.MessageUser();
-  fromUser.setUserid(parseInt(req.session.user.userId));
-  fromUser.setUsername(req.session.user.userName);
-  request.setRequester(fromUser);
-  request.setGroupid(groupId);
-
-  groupClient.loadMessages(request, (err, response) => {
-    if (err) return res.status(500).json({ error: 'Internal error' });
-    const messages = response.getSendersList().map((sender, index) => ({
-      sender: { userId: sender.getUserid(), username: sender.getUsername() },
-      groupId,
-      message: response.getMessagesList()[index],
-      timestamp: response.getTimestampsList()[index],
-      isGroup: true
+      timestamp: response.getTimestampsList()[index]
     }));
     res.json({ messages });
   });
@@ -281,24 +211,5 @@ app.post('/api/messages/user/send', (req, res) => {
   stream.on('error', () => res.status(500).json({ error: 'Send failed' }));
   stream.write(request);
 });
-
-app.post('/api/messages/group/send', (req, res) => {
-  if (!req.isAuthenticated) return res.status(401).json({ error: 'Unauthorized' });
-
-  const request = new group_pb.SendMessageRequest();
-  const fromUser = new common_pb.MessageUser();
-  fromUser.setUserid(req.session.user.userId);
-  fromUser.setUsername(req.session.user.userName);
-  request.setFromuser(fromUser);
-  request.setGroupid(parseInt(req.body.groupId));
-  request.setTextmessage(req.body.message);
-
-  const stream = groupClient.sendUserMessage();
-  stream.on('data', () => res.json({ success: true }));
-  stream.on('error', () => res.status(500).json({ error: 'Send failed' }));
-  stream.write(request);
-});
-
-
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

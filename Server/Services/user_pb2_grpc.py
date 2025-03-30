@@ -44,7 +44,7 @@ class UserChatServiceStub(object):
                 request_serializer=user__pb2.SendMessageRequest.SerializeToString,
                 response_deserializer=user__pb2.SendMessageResponse.FromString,
                 _registered_method=True)
-        self.ReceiveMessages = channel.stream_stream(
+        self.ReceiveMessages = channel.unary_stream(
                 '/ChatsApp.user.UserChatService/ReceiveMessages',
                 request_serializer=user__pb2.ReceiveMessageRequest.SerializeToString,
                 response_deserializer=user__pb2.ReceiveMessageResponse.FromString,
@@ -66,7 +66,7 @@ class UserChatServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ReceiveMessages(self, request_iterator, context):
+    def ReceiveMessages(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -85,7 +85,7 @@ def add_UserChatServiceServicer_to_server(servicer, server):
                     request_deserializer=user__pb2.SendMessageRequest.FromString,
                     response_serializer=user__pb2.SendMessageResponse.SerializeToString,
             ),
-            'ReceiveMessages': grpc.stream_stream_rpc_method_handler(
+            'ReceiveMessages': grpc.unary_stream_rpc_method_handler(
                     servicer.ReceiveMessages,
                     request_deserializer=user__pb2.ReceiveMessageRequest.FromString,
                     response_serializer=user__pb2.ReceiveMessageResponse.SerializeToString,
@@ -156,7 +156,7 @@ class UserChatService(object):
             _registered_method=True)
 
     @staticmethod
-    def ReceiveMessages(request_iterator,
+    def ReceiveMessages(request,
             target,
             options=(),
             channel_credentials=None,
@@ -166,8 +166,8 @@ class UserChatService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.stream_stream(
-            request_iterator,
+        return grpc.experimental.unary_stream(
+            request,
             target,
             '/ChatsApp.user.UserChatService/ReceiveMessages',
             user__pb2.ReceiveMessageRequest.SerializeToString,

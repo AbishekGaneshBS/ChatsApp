@@ -34,22 +34,15 @@
                         </div>
                     </div>
                 <% }); %>
-                <% groups.forEach(group => { %>
-                    <div class="chat-item" data-type="group" data-group-id="<%= group.groupId %>">
-                        <div class="chat-avatar"><i class="fas fa-users"></i></div>
-                        <div>
-                            <h3><%= group.groupName %></h3>
-                            <p data-id="<%= group.groupId %>" data-type="group"></p>
-                        </div>
-                    </div>
-                <% }); %>
             </div>
         </div>
         
         <div class="chat-area">
             <div id="noChatSelected">
-                
-                
+                <div class="no-chat-selected">
+                    <i class="fas fa-comment-dots"></i>
+                    <h2>Select a chat to start messaging</h2>
+                </div>
             </div>
 
             <div id="activeChat">
@@ -71,24 +64,19 @@
 
     <script>
         let currentChatId = null;
-        let currentChatType = null;
+        let currentChatType = 'user';
         let userMessageStream = null;
-        let groupMessageStream = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.chat-item').forEach(item => {
                 item.addEventListener('click', () => {
-                    const type = item.dataset.type;
-                    const id = type === 'user' ? item.dataset.userId : item.dataset.groupId;
-                    loadChat(type, id, item);
+                    const id = item.dataset.userId;
+                    loadChat('user', id, item);
                 });
             });
 
             userMessageStream = new EventSource('/api/messages/user/stream');
-            userMessageStream.onmessage = (e) => handleMessage(JSON.parse(e.data), 'user');
-
-            groupMessageStream = new EventSource('/api/messages/group/stream');
-            groupMessageStream.onmessage = (e) => handleMessage(JSON.parse(e.data), 'group');
+            userMessageStream.onmessage = (e) => handleMessage(JSON.parse(e.data));
 
             document.getElementById('sendButton').addEventListener('click', sendMessage);
             document.getElementById('messageInput').addEventListener('keypress', e => {
@@ -96,32 +84,45 @@
             });
         });
 
-        function handleMessage(message, type) {
-            const id = type === 'user' ? message.senderId : message.groupId;
-            updateLastMessagePreview(id, type, message.message);
-            if (currentChatType === type && currentChatId == id) {
-                addMessageToUI(message, false);
+        function handleMessage(message) {
+            if (!message || !message.senderId) {
+                console.error("Invalid message received:", message);
+                return;
+            }
+
+            console.log("New message received:", message);
+
+            if (message.message) {
+                updateLastMessagePreview(message.senderId, message.message);
+
+                if (currentChatId == message.senderId) {
+                    addMessageToUI(message, false);
+                } else {
+                    const item = document.querySelector(`[data-user-id="${message.senderId}"]`);
+                    if (item) loadChat('user', message.senderId, item);
+                }
             }
         }
 
         async function loadChat(type, id, element) {
-            currentChatType = type;
             currentChatId = id;
             document.getElementById('noChatSelected').style.display = 'none';
             document.getElementById('activeChat').style.display = 'block';
-            
+
             const name = element.querySelector('h3').textContent.split('\n')[0].trim();
+
             document.getElementById('chatName').textContent = name;
-            document.getElementById('chatAvatar').textContent = type === 'user' 
-                ? name.charAt(0).toUpperCase() 
-                : '<i class="fas fa-users"></i>';
+            document.getElementById('chatAvatar').textContent = name.charAt(0).toUpperCase();
 
             try {
-                const response = await fetch(`/api/messages/${type}/${id}`);
+                const response = await fetch(`/api/messages/user/${id}`);
                 const data = await response.json();
                 document.getElementById('messagesContainer').innerHTML = '';
-                data.messages.forEach(msg => addMessageToUI(msg, false));
-                document.getElementById('messagesContainer').scrollTop = document.getElementById('messagesContainer').scrollHeight;
+                data.messages.forEach(msg => 
+                    addMessageToUI(msg, msg.sender.userId != id)
+                );
+                document.getElementById('messagesContainer').scrollTop = 
+                    document.getElementById('messagesContainer').scrollHeight;
                 document.getElementById('messageInput').focus();
             } catch(error) {
                 console.error('Failed to load messages:', error);
@@ -131,20 +132,20 @@
         async function sendMessage() {
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
-            if (!message) return;
-
-            const endpoint = `/api/messages/${currentChatType}/send`;
-            const body = currentChatType === 'user' 
-                ? { recipientId: currentChatId, message } 
-                : { groupId: currentChatId, message };
+            if (!message || !currentChatId) return;
 
             try {
-                await fetch(endpoint, {
+                await fetch('/api/messages/user/send', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
+                    body: JSON.stringify({
+                        recipientId: currentChatId,
+                        message: message
+                    })
                 });
                 input.value = '';
+                const item = document.querySelector(`[data-user-id="${currentChatId}"]`);
+                if (item) loadChat('user', currentChatId, item);
             } catch(error) {
                 console.error('Failed to send message:', error);
             }
@@ -154,9 +155,9 @@
             const container = document.getElementById('messagesContainer');
             const div = document.createElement('div');
             div.className = `message ${isMe ? 'sent' : 'received'}`;
+            
             div.innerHTML = `
                 <div class="message-content">
-                    ${!isMe && currentChatType === 'group' ? `<div>${msg.senderName}</div>` : ''}
                     <div>${msg.message}</div>
                     <div>${new Date(msg.timestamp).toLocaleTimeString()}</div>
                 </div>
@@ -165,14 +166,13 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        function updateLastMessagePreview(id, type, message) {
-            const element = document.querySelector(`[data-${type}-id="${id}"] p`);
+        function updateLastMessagePreview(id, message) {
+            const element = document.querySelector(`[data-user-id="${id}"] p:nth-of-type(2)`);
             if (element) element.textContent = message.substring(0, 30);
         }
 
         window.addEventListener('beforeunload', () => {
-            userMessageStream.close();
-            groupMessageStream.close();
+            if (userMessageStream) userMessageStream.close();
         });
     </script>
 </body>

@@ -18,7 +18,7 @@ message LoadMessageResponse {
 }
 
 message ReceiveMessageRequest {
-    ChatsApp.common.MessageUser fromuser = 1; 
+    ChatsApp.common.MessageUser fromuser = 1;
 }
 
 message ReceiveMessageResponse {
@@ -40,5 +40,5 @@ service UserChatService {
    
     rpc LoadMessages(LoadMessageRequest) returns (LoadMessageResponse) {};
     rpc SendMessages(stream SendMessageRequest) returns (stream SendMessageResponse);
-    rpc ReceiveMessages(stream ReceiveMessageRequest) returns (stream ReceiveMessageResponse);
+    rpc ReceiveMessages(ReceiveMessageRequest) returns (stream ReceiveMessageResponse);
 }

@@ -97,7 +97,7 @@ var UserChatServiceService = exports.UserChatServiceService = {
   },
   receiveMessages: {
     path: '/ChatsApp.user.UserChatService/ReceiveMessages',
-    requestStream: true,
+    requestStream: false,
     responseStream: true,
     requestType: user_pb.ReceiveMessageRequest,
     responseType: user_pb.ReceiveMessageResponse,
