@@ -5,7 +5,7 @@ from typing import AsyncIterator, Dict, List, Tuple, Optional
 import grpc
 from concurrent import futures
 import sys
-import inspect
+
 sys.path.append("Services") 
 from Services import common_pb2 as common_pb
 from Services import user_pb2 as user_pb
@@ -114,12 +114,13 @@ class ChatManager:
         except sqlite3.Error:
             return "Unknown"
 
-    async def message_read(self, user_id: int, sender_id: int, message: str, timestamp: str):
+    def message_read(self, user_id: int, sender_id: int, message: str, timestamp: str):
         try:
             with self.db_manager.get_connection() as conn:
                 cursor = conn.cursor()
                 cursor.execute("""UPDATE UserToUserMessages SET Is_Read = 1 WHERE Receiver_ID = ? AND Sender_ID = ? AND Message = ? AND Sent_At = ?""", (user_id, sender_id, message, timestamp))
                 conn.commit()
+                return
         except sqlite3.Error:
             return "Unknown"
     
@@ -190,14 +191,11 @@ class UserChatService(user_pb_grpc.UserChatServiceServicer):
 
     async def ReceiveMessages(self, request: user_pb.ReceiveMessageRequest, 
                          context) -> AsyncIterator[user_pb.ReceiveMessageResponse]:
-        conn = self.chat_manager.db_manager.get_connection()
-        cursor = conn.cursor()
         try:
-            
             user_id = request.fromuser.userid
             print(f"User {user_id} connected to message stream")
             while True:
-                messages = self.chat_manager.get_unread_messages(user_id)
+                messages = await self.chat_manager.get_unread_messages(user_id)
                 if messages:
                     for sender_id, message, timestamp in messages:
                         sender_name = await self.chat_manager.get_user_name(sender_id)
@@ -215,6 +213,7 @@ class UserChatService(user_pb_grpc.UserChatServiceServicer):
                             ),
                             message=message  
                         )
+                await asyncio.sleep(1)
                 
                 
 

@@ -5,6 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChatsApp</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Added new styles to handle the visibility states */
+        #activeChat {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        #activeChat.active {
+            display: flex;
+        }
+        
+        .message-input {
+            display: none;
+        }
+        
+        #activeChat.active .message-input {
+            display: flex;
+        }
+        
+        .loading-chat {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            color: #888;
+        }
+    </style>
     <link rel="stylesheet" href="./Styles/dashboardstyle.css">
 </head>
 <body>
@@ -55,8 +83,8 @@
                 </div>
                 <div class="messages-container" id="messagesContainer"></div>
                 <div class="message-input">
-                    <input type="text" id="messageInput" placeholder="Type a message...">
-                    <button id="sendButton"><i class="fas fa-paper-plane"></i></button>
+                    <input type="text" id="messageInput" placeholder="Type a message..." disabled>
+                    <button id="sendButton" disabled><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
@@ -66,23 +94,43 @@
         let currentChatId = null;
         let currentChatType = 'user';
         let userMessageStream = null;
+        let isLoadingChat = false;
 
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.chat-item').forEach(item => {
                 item.addEventListener('click', () => {
+                    if (isLoadingChat) return;
                     const id = item.dataset.userId;
                     loadChat('user', id, item);
                 });
             });
 
-            userMessageStream = new EventSource('/api/messages/user/stream');
-            userMessageStream.onmessage = (e) => handleMessage(JSON.parse(e.data));
-
+            initializeMessageStream();
+            
             document.getElementById('sendButton').addEventListener('click', sendMessage);
             document.getElementById('messageInput').addEventListener('keypress', e => {
                 if (e.key === 'Enter') sendMessage();
             });
         });
+
+        function initializeMessageStream() {
+            userMessageStream = new EventSource('/api/messages/user/stream');
+            
+            userMessageStream.onmessage = (e) => {
+                try {
+                    const message = JSON.parse(e.data);
+                    handleMessage(message);
+                } catch (error) {
+                    console.error("Error parsing message:", error);
+                }
+            };
+            
+            userMessageStream.onerror = (e) => {
+                console.error("Message stream error:", e);
+                // Attempt to reconnect after a delay
+                setTimeout(initializeMessageStream, 3000);
+            };
+        }
 
         function handleMessage(message) {
             if (!message || !message.senderId) {
@@ -99,43 +147,78 @@
                     addMessageToUI(message, false);
                 } else {
                     const item = document.querySelector(`[data-user-id="${message.senderId}"]`);
-                    if (item) loadChat('user', message.senderId, item);
+                    if (item) {
+                        // Show notification badge or highlight the chat item
+                        item.classList.add('new-message');
+                    }
                 }
             }
         }
 
         async function loadChat(type, id, element) {
+            isLoadingChat = true;
             currentChatId = id;
+            
+            // Show loading state
             document.getElementById('noChatSelected').style.display = 'none';
-            document.getElementById('activeChat').style.display = 'block';
+            document.getElementById('activeChat').classList.add('active');
+            
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.innerHTML = '<div class="loading-chat">Loading messages...</div>';
+            
+            // Disable input while loading
+            document.getElementById('messageInput').disabled = true;
+            document.getElementById('sendButton').disabled = true;
 
             const name = element.querySelector('h3').textContent.split('\n')[0].trim();
-
             document.getElementById('chatName').textContent = name;
             document.getElementById('chatAvatar').textContent = name.charAt(0).toUpperCase();
 
             try {
                 const response = await fetch(`/api/messages/user/${id}`);
+                if (!response.ok) throw new Error('Failed to load messages');
+                
                 const data = await response.json();
-                document.getElementById('messagesContainer').innerHTML = '';
-                data.messages.forEach(msg => 
-                    addMessageToUI(msg, msg.sender.userId != id)
-                );
-                document.getElementById('messagesContainer').scrollTop = 
-                    document.getElementById('messagesContainer').scrollHeight;
+                messagesContainer.innerHTML = '';
+                
+                if (data.messages && data.messages.length > 0) {
+                    data.messages.forEach(msg => 
+                        addMessageToUI(msg, msg.sender.userId != id)
+                    );
+                } else {
+                    messagesContainer.innerHTML = '<div class="no-messages">No messages yet. Start the conversation!</div>';
+                }
+                
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
                 document.getElementById('messageInput').focus();
+                
+                // Remove new message indicator if present
+                element.classList.remove('new-message');
             } catch(error) {
                 console.error('Failed to load messages:', error);
+                messagesContainer.innerHTML = '<div class="error-loading">Failed to load messages. Please try again.</div>';
+            } finally {
+                isLoadingChat = false;
+                // Enable input after loading
+                document.getElementById('messageInput').disabled = false;
+                document.getElementById('sendButton').disabled = false;
             }
         }
 
         async function sendMessage() {
             const input = document.getElementById('messageInput');
+            const button = document.getElementById('sendButton');
             const message = input.value.trim();
-            if (!message || !currentChatId) return;
+            
+            if (!message || !currentChatId || isLoadingChat) return;
+
+            // Disable during send
+            input.disabled = true;
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
             try {
-                await fetch('/api/messages/user/send', {
+                const response = await fetch('/api/messages/user/send', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -143,11 +226,30 @@
                         message: message
                     })
                 });
+                
+                if (!response.ok) throw new Error('Failed to send message');
+                
                 input.value = '';
+                
+                // Optimistically add the message to UI
+                const tempMsg = {
+                    message: message,
+                    timestamp: new Date().toISOString(),
+                    sender: { userId: "temp" } // Mark as temporary
+                };
+                addMessageToUI(tempMsg, true);
+                
+                // Refresh the chat to get the actual message from server
                 const item = document.querySelector(`[data-user-id="${currentChatId}"]`);
                 if (item) loadChat('user', currentChatId, item);
             } catch(error) {
                 console.error('Failed to send message:', error);
+                alert('Failed to send message. Please try again.');
+            } finally {
+                input.disabled = false;
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                input.focus();
             }
         }
 
@@ -156,10 +258,14 @@
             const div = document.createElement('div');
             div.className = `message ${isMe ? 'sent' : 'received'}`;
             
+            // Format timestamp more cleanly
+            const timestamp = new Date(msg.timestamp);
+            const timeString = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
             div.innerHTML = `
                 <div class="message-content">
                     <div>${msg.message}</div>
-                    <div>${new Date(msg.timestamp).toLocaleTimeString()}</div>
+                    <div class="message-time">${timeString} ${isMe ? '<i class="fas fa-check-double"></i>' : ''}</div>
                 </div>
             `;
             container.appendChild(div);
@@ -168,7 +274,14 @@
 
         function updateLastMessagePreview(id, message) {
             const element = document.querySelector(`[data-user-id="${id}"] p:nth-of-type(2)`);
-            if (element) element.textContent = message.substring(0, 30);
+            if (element) {
+                element.textContent = message.length > 30 ? message.substring(0, 30) + '...' : message;
+                // Add visual indicator for new messages
+                if (id !== currentChatId) {
+                    const chatItem = document.querySelector(`[data-user-id="${id}"]`);
+                    chatItem.classList.add('has-new-message');
+                }
+            }
         }
 
         window.addEventListener('beforeunload', () => {
