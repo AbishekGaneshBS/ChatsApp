@@ -13,7 +13,7 @@ import threading
 DB_PATH = 'DataBase/database.db'
 SERVER_PORT = '[::]:8000'
 
-server = None  # Define server as a global variable
+server = None 
 
 def initialize_database():
     with sqlite3.connect(DB_PATH) as conn:

@@ -6,7 +6,7 @@
     <title>ChatsApp</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Added new styles to handle the visibility states */
+        
         #activeChat {
             display: none;
             flex-direction: column;
@@ -127,7 +127,7 @@
             
             userMessageStream.onerror = (e) => {
                 console.error("Message stream error:", e);
-                // Attempt to reconnect after a delay
+                
                 setTimeout(initializeMessageStream, 3000);
             };
         }
@@ -148,7 +148,7 @@
                 } else {
                     const item = document.querySelector(`[data-user-id="${message.senderId}"]`);
                     if (item) {
-                        // Show notification badge or highlight the chat item
+                        
                         item.classList.add('new-message');
                     }
                 }
@@ -159,14 +159,14 @@
             isLoadingChat = true;
             currentChatId = id;
             
-            // Show loading state
+            
             document.getElementById('noChatSelected').style.display = 'none';
             document.getElementById('activeChat').classList.add('active');
             
             const messagesContainer = document.getElementById('messagesContainer');
             messagesContainer.innerHTML = '<div class="loading-chat">Loading messages...</div>';
             
-            // Disable input while loading
+            
             document.getElementById('messageInput').disabled = true;
             document.getElementById('sendButton').disabled = true;
 
@@ -192,14 +192,14 @@
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
                 document.getElementById('messageInput').focus();
                 
-                // Remove new message indicator if present
+               
                 element.classList.remove('new-message');
             } catch(error) {
                 console.error('Failed to load messages:', error);
                 messagesContainer.innerHTML = '<div class="error-loading">Failed to load messages. Please try again.</div>';
             } finally {
                 isLoadingChat = false;
-                // Enable input after loading
+      
                 document.getElementById('messageInput').disabled = false;
                 document.getElementById('sendButton').disabled = false;
             }
@@ -212,7 +212,7 @@
             
             if (!message || !currentChatId || isLoadingChat) return;
 
-            // Disable during send
+       
             input.disabled = true;
             button.disabled = true;
             button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -231,15 +231,15 @@
                 
                 input.value = '';
                 
-                // Optimistically add the message to UI
+  
                 const tempMsg = {
                     message: message,
                     timestamp: new Date().toISOString(),
-                    sender: { userId: "temp" } // Mark as temporary
+                    sender: { userId: "temp" } 
                 };
                 addMessageToUI(tempMsg, true);
                 
-                // Refresh the chat to get the actual message from server
+
                 const item = document.querySelector(`[data-user-id="${currentChatId}"]`);
                 if (item) loadChat('user', currentChatId, item);
             } catch(error) {
@@ -258,7 +258,7 @@
             const div = document.createElement('div');
             div.className = `message ${isMe ? 'sent' : 'received'}`;
             
-            // Format timestamp more cleanly
+
             const timestamp = new Date(msg.timestamp);
             const timeString = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             
@@ -276,7 +276,7 @@
             const element = document.querySelector(`[data-user-id="${id}"] p:nth-of-type(2)`);
             if (element) {
                 element.textContent = message.length > 30 ? message.substring(0, 30) + '...' : message;
-                // Add visual indicator for new messages
+
                 if (id !== currentChatId) {
                     const chatItem = document.querySelector(`[data-user-id="${id}"]`);
                     chatItem.classList.add('has-new-message');

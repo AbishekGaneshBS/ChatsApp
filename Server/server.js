@@ -100,8 +100,11 @@ app.post('/register', (req, res) => {
     }
     if (response.getStatus() === common_pb.ResponseStatus.SUCCESS) {
       req.session.flash = { message: 'Registration successful', formToShow: 'login' };
-    } else {
-      req.session.flash = { message: 'Registration failed', formToShow: 'register' };
+    } else if (response.getStatus() === common_pb.ResponseStatus.ACCOUNT_EXISTS){
+      req.session.flash = { message: 'Account already exists.', formToShow: 'register' };
+    }
+    else{
+      req.session.flash = { message: 'Failed', formToShow: 'register' };
     }
     res.redirect('/');
   });
